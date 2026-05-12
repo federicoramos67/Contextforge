@@ -5,6 +5,8 @@ import Checklist from './components/Checklist';
 import ScorePanel from './components/ScorePanel';
 import PromptSuggestion from './components/PromptSuggestion';
 import { classifyPrompt } from './logic/classifyPrompt';
+import { classifyWithAI } from './logic/classifyWithAI';
+import { getActiveProvider, getStoredKeys, STORAGE_KEY } from './config';
 import { scoreContext } from './logic/scoreContext';
 import { generateAdvice } from './logic/generateAdvice';
 import { generateRefinedPrompt } from './logic/generateRefinedPrompt';
@@ -30,10 +32,44 @@ const examples = [
   },
 ];
 
+// Definición de campos del panel de configuración
+const CONFIG_PROVIDERS = [
+  { id: 'mistral',   label: 'Mistral',          type: 'password', placeholder: 'VITE_MISTRAL_KEY' },
+  { id: 'groq',      label: 'Groq',             type: 'password', placeholder: 'VITE_GROQ_KEY' },
+  { id: 'gemini',    label: 'Google Gemini',    type: 'password', placeholder: 'VITE_GEMINI_KEY' },
+  { id: 'anthropic', label: 'Anthropic',        type: 'password', placeholder: 'VITE_ANTHROPIC_KEY' },
+  { id: 'openai',    label: 'OpenAI',           type: 'password', placeholder: 'VITE_OPENAI_KEY' },
+  { id: 'ollama',    label: 'Ollama (URL local)',type: 'text',     placeholder: 'http://localhost:11434' },
+];
+
+const EMPTY_FORM = { mistral: '', groq: '', gemini: '', anthropic: '', openai: '', ollama: '' };
+
+// Enmascara una key mostrando solo los últimos 4 caracteres
+function maskKey(value) {
+  if (!value || value.length <= 4) return value;
+  return '••••••••' + value.slice(-4);
+}
+
+// Para Ollama muestra la URL completa (no es sensible); para el resto aplica máscara
+function maskValue(id, value) {
+  return id === 'ollama' ? value : maskKey(value);
+}
+
 export default function App() {
   const [userText, setUserText] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [copiedMessage, setCopiedMessage] = useState('');
+  const [useAI, setUseAI] = useState(false);
+
+  // Estado del panel de configuración
+  const [showConfig, setShowConfig] = useState(false);
+  const [formValues, setFormValues] = useState(EMPTY_FORM);
+  // savedKeys se inicializa leyendo localStorage para mostrar indicadores de "Guardada"
+  const [savedKeys, setSavedKeys] = useState(() => getStoredKeys());
+
+  // getActiveProvider() lee localStorage en cada render, por lo que se actualiza
+  // automáticamente tras guardar o borrar keys sin necesidad de estado extra
+  const activeProvider = getActiveProvider();
 
   const markdownReport = useMemo(() => {
     if (!analysis) return '';
@@ -45,7 +81,7 @@ export default function App() {
     });
   }, [analysis, userText]);
 
-  function analyze() {
+  async function analyze() {
     const cleanText = userText.trim();
 
     if (!cleanText) {
@@ -54,20 +90,73 @@ export default function App() {
       return;
     }
 
-    const category = classifyPrompt(cleanText);
+    let category;
+
+    if (useAI && activeProvider) {
+      setCopiedMessage(`Analizando con ${activeProvider.name}...`);
+      category = await classifyWithAI(cleanText);
+      if (category._fallback) {
+        setCopiedMessage('No se pudo conectar con la IA. Usando modo reglas.');
+      }
+    } else {
+      category = classifyPrompt(cleanText);
+    }
+
     const advice = generateAdvice(category);
     const scoreData = scoreContext(cleanText);
     const refinedPrompt = generateRefinedPrompt(cleanText, category);
 
     setAnalysis({ category, advice, scoreData, refinedPrompt });
-    setCopiedMessage('Análisis generado.');
+
+    if (!category._fallback) {
+      setCopiedMessage('Análisis generado.');
+    }
+  }
+
+  // Guarda las keys ingresadas en localStorage.
+  // Los campos vacíos conservan el valor previo (no borran la key existente).
+  function saveConfig() {
+    const toSave = { ...savedKeys };
+
+    for (const { id } of CONFIG_PROVIDERS) {
+      if (formValues[id].trim()) {
+        toSave[id] = formValues[id].trim();
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    setSavedKeys(toSave);
+    setFormValues(EMPTY_FORM);
+    setShowConfig(false);
+
+    // getActiveProvider() ya lee el localStorage actualizado en el próximo render
+    const active = getActiveProvider();
+    setCopiedMessage(
+      active
+        ? `Proveedor activo: ${active.name}`
+        : 'Sin proveedor activo — usando modo heurístico',
+    );
+  }
+
+  // Elimina todas las keys guardadas en localStorage
+  function clearConfig() {
+    localStorage.removeItem(STORAGE_KEY);
+    setSavedKeys({});
+    setFormValues(EMPTY_FORM);
+
+    const active = getActiveProvider();
+    setCopiedMessage(
+      active
+        ? `Keys de UI borradas. Proveedor activo por .env: ${active.name}`
+        : 'Keys borradas — sin proveedor activo. Usando modo heurístico.',
+    );
   }
 
   async function copyToClipboard(text, successMessage) {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedMessage(successMessage);
-    } catch (error) {
+    } catch {
       setCopiedMessage('No pude copiar automáticamente. Seleccioná el texto y copialo manualmente.');
     }
   }
@@ -97,10 +186,58 @@ export default function App() {
           </p>
         </div>
         <div className="hero-badge">
-          <span>v0.1</span>
-          <strong>Reglas locales</strong>
+          <span>v0.2</span>
+          <strong>{useAI && activeProvider ? `IA — ${activeProvider.name}` : 'Reglas locales'}</strong>
+          <button
+            className={`mode-toggle-btn${useAI ? ' active' : ''}`}
+            onClick={() => setUseAI((u) => !u)}
+            disabled={!activeProvider}
+            title={
+              !activeProvider
+                ? 'Configurá una API key en .env para activar el Modo IA'
+                : 'Cambiar modo de análisis'
+            }
+          >
+            {useAI && activeProvider ? `Modo IA — ${activeProvider.name}` : 'Modo reglas'}
+          </button>
+          <button
+            className={`config-open-btn${showConfig ? ' open' : ''}`}
+            onClick={() => setShowConfig((s) => !s)}
+          >
+            ⚙ Configurar API
+          </button>
         </div>
       </header>
+
+      {showConfig && (
+        <section className="config-panel panel">
+          <h3>Proveedores de IA</h3>
+          <div className="config-grid">
+            {CONFIG_PROVIDERS.map(({ id, label, type, placeholder }) => (
+              <div key={id} className="config-field">
+                <label htmlFor={`cfg-${id}`}>{label}</label>
+                <input
+                  id={`cfg-${id}`}
+                  type={type}
+                  value={formValues[id]}
+                  onChange={(e) => setFormValues((v) => ({ ...v, [id]: e.target.value }))}
+                  placeholder={placeholder}
+                  autoComplete="off"
+                />
+                {savedKeys[id] && (
+                  <small className="config-saved">
+                    Guardada: {maskValue(id, savedKeys[id])}
+                  </small>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="actions-row">
+            <button className="primary-button" onClick={saveConfig}>Guardar</button>
+            <button className="secondary-button" onClick={clearConfig}>Borrar todo</button>
+          </div>
+        </section>
+      )}
 
       {copiedMessage && <div className="status-message">{copiedMessage}</div>}
 
@@ -112,7 +249,7 @@ export default function App() {
           examples={examples}
           onExample={(text) => {
             setUserText(text);
-            setCopiedMessage('Ejemplo cargado. Presioná “Analizar contexto”.');
+            setCopiedMessage('Ejemplo cargado. Presioná "Analizar contexto".');
           }}
         />
 
