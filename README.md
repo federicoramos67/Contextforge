@@ -1,10 +1,26 @@
 # ContextForge
 
+[![ContextForge CI](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml/badge.svg)](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Made with React](https://img.shields.io/badge/React-local--first-61DAFB?logo=react)](https://react.dev/)
+[![Built with Vite](https://img.shields.io/badge/Vite-fast--dev-646CFF?logo=vite)](https://vitejs.dev/)
+[![AI-assisted workflow](https://img.shields.io/badge/Workflow-AI--assisted-blueviolet)](docs/CODEX_WORKFLOW.md)
+
 ContextForge is a local-first web tool that helps users prepare better context before asking an AI for help.
 
 Instead of sending a vague prompt directly to an AI model, the user writes a natural-language need and ContextForge recommends what files, formats, examples, constraints, and supporting material should be shared to obtain a better answer.
 
-The project is also a documented example of building software with AI assistance using small, verifiable steps, manual validation, Git checkpoints, and progressive documentation.
+The project is also a documented example of building software with AI assistance using small, verifiable steps, manual validation, Git checkpoints and progressive documentation.
+
+## Preview
+
+> Demo screenshots/GIFs will be added as the UI stabilizes.
+
+For now, ContextForge runs locally with Vite at:
+
+```text
+http://localhost:5173/
+```
 
 ## What ContextForge does
 
@@ -65,6 +81,8 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 - Display of detected keywords/signals.
 - Manual QA cases documented with a Python helper script.
 - Documented AI-assisted development workflow.
+- CI workflow that validates production builds.
+- Open-source project structure with contribution, security and issue templates.
 
 ## Example outputs
 
@@ -127,12 +145,16 @@ Recommended context:
 - CSS
 - JSON rules
 - Python auxiliary QA script
+- GitHub Actions
 - Git
 
 ## Project structure
 
 ```text
 contextforge/
+├─ .github/
+│  ├─ ISSUE_TEMPLATE/
+│  └─ workflows/
 ├─ src/
 │  ├─ components/
 │  │  ├─ Checklist.jsx
@@ -157,6 +179,12 @@ contextforge/
 │  └─ ROADMAP.md
 ├─ tools/
 │  └─ classifier_manual_cases.py
+├─ CHANGELOG.md
+├─ CODE_OF_CONDUCT.md
+├─ CONTRIBUTING.md
+├─ LICENSE
+├─ SECURITY.md
+├─ SUPPORT.md
 ├─ package.json
 ├─ package-lock.json
 ├─ index.html
@@ -200,6 +228,12 @@ Create a production build:
 npm run build
 ```
 
+Preview production build:
+
+```bash
+npm run preview
+```
+
 ## Manual QA helper
 
 ContextForge includes a small Python helper for manual validation cases.
@@ -231,12 +265,21 @@ This project is intentionally built through small, documented steps:
 
 That workflow is part of the value of the project: it shows how AI-assisted development can stay controlled, understandable and auditable.
 
+## Documentation
+
+- [Roadmap](docs/ROADMAP.md)
+- [Codex workflow](docs/CODEX_WORKFLOW.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing guide](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Support guide](SUPPORT.md)
+
 ## Current limitations
 
 - Classification is heuristic and rule-based.
 - Confidence is an approximation, not a statistical probability.
 - Some detected keywords can look technical or repetitive.
-- There are no automated unit tests yet.
+- Automated unit tests are not implemented yet.
 - No backend or external AI API is integrated.
 - Rules are edited manually in JSON.
 
@@ -252,6 +295,7 @@ Planned or possible improvements:
 - Add local history with `localStorage`.
 - Add beginner/professional modes.
 - Add AI-destination presets such as ChatGPT, Claude, Gemini, Manus or Codex.
+- Add screenshots and a public demo.
 
 ## Philosophy
 
@@ -260,3 +304,7 @@ ContextForge is a context preparation layer.
 It is designed to help users think before asking an AI, structure their request, and provide the right supporting material.
 
 Better context usually leads to better AI output.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
