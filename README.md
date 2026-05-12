@@ -1,56 +1,135 @@
 # ContextForge
 
-ContextForge es una herramienta web local que recibe un prompt escrito en lenguaje natural y recomienda qué tipo de contexto conviene compartir con una IA para obtener mejores respuestas.
+ContextForge is a local-first web tool that helps users prepare better context before asking an AI for help.
 
-Ejemplo:
+Instead of sending a vague prompt directly to an AI model, the user writes a natural-language need and ContextForge recommends what files, formats, examples, constraints, and supporting material should be shared to obtain a better answer.
 
-> “Quiero que una IA revise mi landing page y me diga por qué no convierte.”
+The project is also a documented example of building software with AI assistance using small, verifiable steps, manual validation, Git checkpoints, and progressive documentation.
 
-ContextForge responde:
+## What ContextForge does
 
-- categoría detectada;
-- formatos principales recomendados;
-- formatos complementarios;
-- qué evitar;
-- checklist de archivos/contexto;
-- puntuación de calidad del prompt;
-- prompt refinado listo para copiar.
-
-## Estado del proyecto
-
-Versión inicial funcional: **v0.1**
-
-- Sin backend.
-- Sin API externa.
-- Sin base de datos.
-- Funciona con reglas locales en JSON.
-- Pensado para aprender Codex, React, Vite y flujo de trabajo con VS Code.
-
-## Requisitos
-
-Instalar:
-
-1. Node.js LTS.
-2. Git.
-3. VS Code.
-4. Codex CLI o extensión de Codex para VS Code.
-
-## Ejecutar localmente
-
-Dentro de la carpeta del proyecto:
-
-```bash
-npm install
-npm run dev
-```
-
-Luego abrir la URL que muestre la terminal, normalmente:
+Given a prompt such as:
 
 ```text
-http://localhost:5173/
+Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
 ```
 
-## Estructura
+ContextForge returns:
+
+- detected category;
+- classification confidence;
+- recommended primary formats;
+- useful complementary context;
+- what to avoid sharing;
+- explanation of why the category was detected;
+- detected keywords/signals;
+- context quality score;
+- checklist of material to prepare;
+- refined prompt ready to copy.
+
+## Current status
+
+Current checkpoint: **v0.2**
+
+The app currently works locally with React, Vite and JSON-based rules.
+
+It does not use a backend, database, authentication, external AI API or remote processing. The classification logic runs locally in the browser.
+
+## Why this project matters
+
+Many people know how to ask an AI a question, but they do not always know what context to provide.
+
+ContextForge helps users decide whether they should share:
+
+- plain text;
+- source code;
+- logs;
+- screenshots;
+- exported JSON;
+- CSV or Excel files;
+- PDFs;
+- structured examples;
+- constraints and expected outputs.
+
+The goal is not to replace an AI assistant. The goal is to improve the input before using one.
+
+## Key features
+
+- Local rule-based prompt classification.
+- Category-specific recommendations.
+- Context quality scoring.
+- Checklist generation.
+- Refined prompt generation.
+- Markdown export support.
+- Explanation of why a category was detected.
+- Display of detected keywords/signals.
+- Manual QA cases documented with a Python helper script.
+- Documented AI-assisted development workflow.
+
+## Example outputs
+
+### n8n automation
+
+Input:
+
+```text
+Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
+```
+
+Expected result:
+
+```text
+Category: Automatización con n8n
+Confidence: 66%
+Detected keywords: n8n, workflow n8n, webhook n8n
+```
+
+Recommended context:
+
+- exported workflow JSON without credentials;
+- full workflow screenshot;
+- failed execution or error message;
+- example input;
+- expected output;
+- problematic node;
+- connected services.
+
+### Data analysis
+
+Input:
+
+```text
+Necesito que una IA analice un CSV de ventas y me proponga KPIs para un dashboard.
+```
+
+Expected result:
+
+```text
+Category: Análisis de datos / métricas / datasets
+Detected keywords: kpi, dashboard
+```
+
+Recommended context:
+
+- CSV, Excel or SQL sample;
+- analytical question;
+- column definitions;
+- data dictionary;
+- cleaning rules;
+- period analyzed;
+- expected output format.
+
+## Tech stack
+
+- React
+- Vite
+- JavaScript
+- CSS
+- JSON rules
+- Python auxiliary QA script
+- Git
+
+## Project structure
 
 ```text
 contextforge/
@@ -76,31 +155,108 @@ contextforge/
 ├─ docs/
 │  ├─ CODEX_WORKFLOW.md
 │  └─ ROADMAP.md
+├─ tools/
+│  └─ classifier_manual_cases.py
 ├─ package.json
+├─ package-lock.json
 ├─ index.html
-└─ vite.config.js
+├─ vite.config.js
+└─ README.md
 ```
 
-## Cómo funciona
+## How it works
 
-1. El usuario escribe una necesidad.
-2. `classifyPrompt.js` compara el texto contra palabras clave de `contextRules.json`.
-3. `scoreContext.js` evalúa si el prompt trae objetivo, tipo de contenido, problema, resultado esperado y restricciones.
-4. `generateAdvice.js` arma la recomendación.
-5. `generateRefinedPrompt.js` crea un prompt mejorado para copiar.
-6. `exportMarkdown.js` genera un reporte exportable.
+1. The user writes a natural-language need.
+2. `classifyPrompt.js` compares the text against local category rules.
+3. `scoreContext.js` evaluates the quality of the prompt context.
+4. `generateAdvice.js` builds the recommendation object.
+5. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
+6. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
+7. `exportMarkdown.js` can generate an exportable report.
 
-## Próximas mejoras
+## Running locally
 
-- Historial local en `localStorage`.
-- Selector de IA destino: ChatGPT, Claude, Gemini, Manus, Codex.
-- Modo principiante / profesional.
-- Editor de reglas desde la interfaz.
-- Exportación JSON.
-- Tests unitarios para la lógica.
-- Backend opcional.
-- Integración futura con API de IA.
+Install dependencies:
 
-## Filosofía del proyecto
+```bash
+npm install
+```
 
-No intenta reemplazar a una IA avanzada. Sirve como capa previa: ayuda al usuario a preparar mejor su contexto antes de consultar una IA.
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the local URL shown by Vite, usually:
+
+```text
+http://localhost:5173/
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+## Manual QA helper
+
+ContextForge includes a small Python helper for manual validation cases.
+
+Run it from the project root:
+
+```bash
+python tools/classifier_manual_cases.py
+```
+
+or on Windows:
+
+```powershell
+py tools\classifier_manual_cases.py
+```
+
+This script does not connect to the app and does not duplicate the classifier logic. It simply lists manual test cases and expected results to support QA and regression checks.
+
+## Development workflow
+
+This project is intentionally built through small, documented steps:
+
+1. diagnose before modifying code;
+2. make the smallest safe change;
+3. run the build or relevant command;
+4. validate manually in the browser;
+5. document the decision;
+6. create a Git checkpoint.
+
+That workflow is part of the value of the project: it shows how AI-assisted development can stay controlled, understandable and auditable.
+
+## Current limitations
+
+- Classification is heuristic and rule-based.
+- Confidence is an approximation, not a statistical probability.
+- Some detected keywords can look technical or repetitive.
+- There are no automated unit tests yet.
+- No backend or external AI API is integrated.
+- Rules are edited manually in JSON.
+
+## Roadmap
+
+Planned or possible improvements:
+
+- Improve visual presentation of detected keywords.
+- Include diagnostic explanation and keywords in Markdown exports.
+- Add more manual QA cases.
+- Add automated tests for classification logic.
+- Improve category weighting and false-positive handling.
+- Add local history with `localStorage`.
+- Add beginner/professional modes.
+- Add AI-destination presets such as ChatGPT, Claude, Gemini, Manus or Codex.
+
+## Philosophy
+
+ContextForge is a context preparation layer.
+
+It is designed to help users think before asking an AI, structure their request, and provide the right supporting material.
+
+Better context usually leads to better AI output.
