@@ -6,7 +6,7 @@ import ScorePanel from './components/ScorePanel';
 import PromptSuggestion from './components/PromptSuggestion';
 import { classifyPrompt } from './logic/classifyPrompt';
 import { classifyWithAI } from './logic/classifyWithAI';
-import { getActiveProvider, getStoredKeys, STORAGE_KEY } from './config';
+import { getActiveProvider, getAvailableProviders, getStoredKeys, STORAGE_KEY, ACTIVE_PROVIDER_KEY } from './config';
 import { scoreContext } from './logic/scoreContext';
 import { generateAdvice } from './logic/generateAdvice';
 import { generateRefinedPrompt } from './logic/generateRefinedPrompt';
@@ -64,8 +64,14 @@ export default function App() {
   // Estado del panel de configuración
   const [showConfig, setShowConfig] = useState(false);
   const [formValues, setFormValues] = useState(EMPTY_FORM);
+  // Mensaje de confirmación que se muestra dentro del panel antes de cerrarlo
+  const [configMessage, setConfigMessage] = useState('');
   // savedKeys se inicializa leyendo localStorage para mostrar indicadores de "Guardada"
   const [savedKeys, setSavedKeys] = useState(() => getStoredKeys());
+  // Proveedor seleccionado manualmente; 'auto' = respetar orden de prioridad
+  const [selectedProviderId, setSelectedProviderId] = useState(
+    () => localStorage.getItem(ACTIVE_PROVIDER_KEY) || 'auto',
+  );
 
   // getActiveProvider() lee localStorage en cada render, por lo que se actualiza
   // automáticamente tras guardar o borrar keys sin necesidad de estado extra
@@ -127,24 +133,32 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
     setSavedKeys(toSave);
     setFormValues(EMPTY_FORM);
-    setShowConfig(false);
 
-    // getActiveProvider() ya lee el localStorage actualizado en el próximo render
     const active = getActiveProvider();
-    setCopiedMessage(
-      active
-        ? `Proveedor activo: ${active.name}`
-        : 'Sin proveedor activo — usando modo heurístico',
-    );
+    if (active) {
+      // Muestra confirmación dentro del panel 1.2s antes de cerrarlo
+      setConfigMessage(`✓ Proveedor activo: ${active.name}`);
+      setTimeout(() => {
+        setShowConfig(false);
+        setConfigMessage('');
+      }, 1200);
+    } else {
+      setShowConfig(false);
+      setCopiedMessage('Sin proveedor activo — usando modo heurístico');
+    }
   }
 
-  // Elimina todas las keys guardadas en localStorage
+  // Elimina todas las keys guardadas en localStorage, incluyendo la selección manual
   function clearConfig() {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ACTIVE_PROVIDER_KEY);
     setSavedKeys({});
     setFormValues(EMPTY_FORM);
+    setSelectedProviderId('auto');
 
     const active = getActiveProvider();
+    // Si no queda ningún proveedor activo, revertir al modo reglas
+    if (!active) setUseAI(false);
     setCopiedMessage(
       active
         ? `Keys de UI borradas. Proveedor activo por .env: ${active.name}`
@@ -187,31 +201,100 @@ export default function App() {
         </div>
         <div className="hero-badge">
           <span>v0.2</span>
-          <strong>{useAI && activeProvider ? `IA — ${activeProvider.name}` : 'Reglas locales'}</strong>
-          <button
-            className={`mode-toggle-btn${useAI ? ' active' : ''}`}
-            onClick={() => setUseAI((u) => !u)}
-            disabled={!activeProvider}
-            title={
-              !activeProvider
-                ? 'Configurá una API key en .env para activar el Modo IA'
-                : 'Cambiar modo de análisis'
-            }
-          >
-            {useAI && activeProvider ? `Modo IA — ${activeProvider.name}` : 'Modo reglas'}
-          </button>
-          <button
-            className={`config-open-btn${showConfig ? ' open' : ''}`}
-            onClick={() => setShowConfig((s) => !s)}
-          >
-            ⚙ Configurar API
-          </button>
+
+          {/* Segmented control: [Modo reglas] [● Modo IA · Mistral][⚙] */}
+          <div className="mode-switcher">
+            {/* Segmento izquierdo: siempre visible */}
+            <button
+              className={`mode-btn${!useAI ? ' active' : ''}`}
+              onClick={() => setUseAI(false)}
+              title="Usar clasificación local por reglas"
+            >
+              Modo reglas
+            </button>
+
+            {/* Segmento derecho: botón IA + sufijo gear formando una sola unidad pill */}
+            <div className="mode-ai-group">
+              {/*
+                Estado 1 — sin proveedor: "Modo IA ⚙", click abre config
+                Estado 2 — proveedor listo, modo reglas: "● Modo IA · X", click activa IA
+                Estado 3 — modo IA activo: "● X" con punto pulsante
+              */}
+              <button
+                className={`mode-btn mode-btn-ai${useAI && activeProvider ? ' active' : ''}${activeProvider ? ' with-gear' : ''}`}
+                onClick={() => {
+                  if (!activeProvider) {
+                    setShowConfig((s) => !s);
+                  } else {
+                    setUseAI(true);
+                  }
+                }}
+                title={
+                  !activeProvider
+                    ? 'Configurá una API key para activar el Modo IA'
+                    : `Activar Modo IA — ${activeProvider.name}`
+                }
+              >
+                {!activeProvider ? (
+                  // Estado 1: sin proveedor
+                  <>Modo IA <span className="mode-gear-inline">⚙</span></>
+                ) : useAI ? (
+                  // Estado 3: IA activa, dot pulsante + nombre abreviado
+                  <><span className="mode-dot mode-dot--pulse" />{activeProvider.name.length > 7 ? activeProvider.name.slice(0, 6) + '…' : activeProvider.name}</>
+                ) : (
+                  // Estado 2: proveedor listo, modo reglas activo
+                  <><span className="mode-dot" />Modo IA · {activeProvider.name.length > 7 ? activeProvider.name.slice(0, 6) + '…' : activeProvider.name}</>
+                )}
+              </button>
+
+              {/* Sufijo ⚙: tercer segmento del pill, abre config sin cambiar modo */}
+              {activeProvider && (
+                <button
+                  className={`mode-gear-btn${showConfig ? ' open' : ''}`}
+                  onClick={() => setShowConfig((s) => !s)}
+                  title="Configurar proveedores de IA"
+                  aria-label="Configurar API"
+                >
+                  ⚙
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
       {showConfig && (
         <section className="config-panel panel">
           <h3>Proveedores de IA</h3>
+
+          {/* Selector de proveedor activo: visible cuando hay al menos uno configurado */}
+          {(() => {
+            const available = getAvailableProviders();
+            return available.length > 0 ? (
+              <div className="config-provider-select">
+                <label htmlFor="cfg-active-provider">Proveedor activo:</label>
+                <select
+                  id="cfg-active-provider"
+                  value={selectedProviderId}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedProviderId(val);
+                    if (val === 'auto') {
+                      localStorage.removeItem(ACTIVE_PROVIDER_KEY);
+                    } else {
+                      localStorage.setItem(ACTIVE_PROVIDER_KEY, val);
+                    }
+                  }}
+                >
+                  <option value="auto">Auto (prioridad)</option>
+                  {available.map(({ id, name }) => (
+                    <option key={id} value={id}>{name}</option>
+                  ))}
+                </select>
+              </div>
+            ) : null;
+          })()}
+
           <div className="config-grid">
             {CONFIG_PROVIDERS.map(({ id, label, type, placeholder }) => (
               <div key={id} className="config-field">
@@ -236,6 +319,8 @@ export default function App() {
             <button className="primary-button" onClick={saveConfig}>Guardar</button>
             <button className="secondary-button" onClick={clearConfig}>Borrar todo</button>
           </div>
+          {/* Confirmación transitoria que aparece al guardar una key válida */}
+          {configMessage && <p className="config-confirm">{configMessage}</p>}
         </section>
       )}
 
