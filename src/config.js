@@ -3,6 +3,8 @@
 // localStorage tiene precedencia sobre las variables de entorno.
 
 export const STORAGE_KEY = 'contextforge_api_keys';
+// Proveedor seleccionado manualmente; 'auto' o ausente = usar orden de prioridad
+export const ACTIVE_PROVIDER_KEY = 'contextforge_active_provider';
 
 // Lee las keys guardadas desde la UI (localStorage). Devuelve {} si no hay nada.
 export function getStoredKeys() {
@@ -55,13 +57,31 @@ const CONFIG = {
 // Orden de prioridad: Ollama → Groq → Mistral → Gemini → Anthropic → OpenAI
 const PRIORITY = ['ollama', 'groq', 'mistral', 'gemini', 'anthropic', 'openai'];
 
+// Devuelve los proveedores que tienen key disponible (localStorage o .env), en orden de prioridad
+export function getAvailableProviders() {
+  const stored = getStoredKeys();
+  return PRIORITY
+    .filter(id => {
+      if (id === 'ollama') return !!(stored.ollama || import.meta.env.VITE_OLLAMA_URL);
+      return !!(stored[id] || CONFIG[id].key);
+    })
+    .map(id => ({ id, name: CONFIG[id].name }));
+}
+
 // Devuelve el primer proveedor activo con su key/URL efectiva resuelta.
-// Para cada proveedor busca primero en localStorage y luego en import.meta.env.
+// Respeta la selección manual (ACTIVE_PROVIDER_KEY) si ese proveedor tiene key disponible;
+// en caso contrario aplica el orden de prioridad automático.
 export function getActiveProvider() {
   const stored = getStoredKeys();
+  const selectedId = localStorage.getItem(ACTIVE_PROVIDER_KEY);
 
-  for (const id of PRIORITY) {
+  const order = (selectedId && selectedId !== 'auto')
+    ? [selectedId, ...PRIORITY.filter(id => id !== selectedId)]
+    : PRIORITY;
+
+  for (const id of order) {
     const p = CONFIG[id];
+    if (!p) continue;
 
     if (id === 'ollama') {
       const url = stored.ollama || import.meta.env.VITE_OLLAMA_URL;

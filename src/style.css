@@ -390,31 +390,6 @@ li + li {
   color: #dbe7ff;
 }
 
-/* Botón discreto para abrir el panel de configuración de API */
-.config-open-btn {
-  display: block;
-  width: 100%;
-  margin-top: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: transparent;
-  color: #5a6e94;
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: color 0.15s;
-}
-
-.config-open-btn:hover {
-  color: #93a4c7;
-}
-
-.config-open-btn.open {
-  color: #b8cbff;
-}
-
 /* Panel expandible de configuración de keys */
 .config-panel {
   margin-bottom: 18px;
@@ -468,6 +443,39 @@ li + li {
   color: #3f516e;
 }
 
+/* Fila de selector de proveedor activo, arriba de los campos de key */
+.config-provider-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.config-provider-select label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #b9c4dc;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.config-provider-select select {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(3, 7, 18, 0.6);
+  color: #f8fbff;
+  font-size: 0.84rem;
+  font: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
+.config-provider-select select:focus {
+  border-color: rgba(108, 142, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(108, 142, 255, 0.08);
+}
+
 /* Indicador de key ya guardada bajo el campo */
 .config-saved {
   font-size: 0.72rem;
@@ -476,35 +484,125 @@ li + li {
   letter-spacing: 0.04em;
 }
 
-.mode-toggle-btn {
-  display: block;
-  width: 100%;
+/* Confirmación verde transitoria que aparece dentro del panel al guardar */
+.config-confirm {
+  margin: 10px 0 0;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  color: #86efac;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Segmented control: [Modo reglas][● Modo IA · X][⚙] */
+.mode-switcher {
+  display: flex;
+  align-items: center;
   margin-top: 10px;
-  padding: 6px 12px;
-  border-radius: 999px;
+}
+
+/* Base compartida de todos los segmentos del pill */
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  color: #93a4c7;
-  font-size: 0.76rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #5a6e94;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.mode-toggle-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
+/* Segmento izquierdo: "Modo reglas" — hijo directo del switcher para no afectar .mode-btn-ai */
+.mode-switcher > .mode-btn {
+  border-radius: 999px 0 0 999px;
+  border-right: none;
 }
 
-.mode-toggle-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+/* Segmento central: botón IA sin gear (Estado 1, solo dos segmentos) */
+.mode-btn-ai {
+  border-radius: 0 999px 999px 0;
 }
 
-.mode-toggle-btn.active {
-  background: rgba(125, 161, 255, 0.15);
-  border-color: rgba(125, 161, 255, 0.3);
+/* Con gear: cede el cap derecho al sufijo ⚙, no tiene border-right */
+.mode-btn-ai.with-gear {
+  border-radius: 0;
+  border-right: none;
+}
+
+/* Segmento activo */
+.mode-btn.active {
+  background: rgba(125, 161, 255, 0.18);
+  border-color: rgba(125, 161, 255, 0.35);
   color: #b8cbff;
+}
+
+/* Hover en segmento habilitado y no activo */
+.mode-btn:hover:not(:disabled):not(.active) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #93a4c7;
+}
+
+/* Contenedor del botón IA + sufijo gear */
+.mode-ai-group {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Sufijo ⚙: tercer segmento del pill, mismo alto que mode-btn por align-items:stretch */
+.mode-gear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 999px 999px 0;
+  background: rgba(255, 255, 255, 0.04);
+  color: #5a6e94;
+  font-size: 11px;
+  opacity: 0.5;
+  cursor: pointer;
+  margin: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.mode-gear-btn:hover,
+.mode-gear-btn.open {
+  opacity: 1;
+  color: #b8cbff;
+}
+
+/* Ícono ⚙ integrado dentro del botón IA cuando no hay proveedor (Estado 1) */
+.mode-gear-inline {
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+/* Punto verde de estado: flex item dentro del botón gracias a inline-flex */
+.mode-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Pulso suave cuando el modo IA está activo */
+@keyframes mode-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.8); }
+}
+
+.mode-dot--pulse {
+  animation: mode-dot-pulse 2s ease-in-out infinite;
 }
 
 @media (max-width: 860px) {
