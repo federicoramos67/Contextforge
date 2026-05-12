@@ -10,6 +10,11 @@ function matchesKeyword(text, keyword) {
   return keywordParts.length > 1 && keywordParts.every((part) => text.includes(part));
 }
 
+function getKeywordWeight(keyword) {
+  const normalizedKeyword = normalizeText(keyword);
+  return normalizedKeyword.length > 7 ? 2 : 1;
+}
+
 export function classifyPrompt(text) {
   const normalized = normalizeText(text);
 
@@ -27,9 +32,7 @@ export function classifyPrompt(text) {
       const matchedKeywords = rule.keywords.filter((keyword) => matchesKeyword(normalized, keyword));
 
       const score = matchedKeywords.reduce((total, keyword) => {
-        const normalizedKeyword = normalizeText(keyword);
-        const weight = normalizedKeyword.length > 7 ? 2 : 1;
-        return total + weight;
+        return total + getKeywordWeight(keyword);
       }, 0);
 
       return { ...rule, score, matchedKeywords };
@@ -46,8 +49,12 @@ export function classifyPrompt(text) {
     };
   }
 
-  const maxReasonableScore = 12;
-  const baseConfidence = Math.round((best.score / maxReasonableScore) * 100);
+  // Calcula el máximo posible para esta categoría según el peso real de sus keywords.
+  const maxPossibleScore = best.keywords.reduce((total, keyword) => {
+    return total + getKeywordWeight(keyword);
+  }, 0);
+
+  const baseConfidence = Math.round((best.score / maxPossibleScore) * 100);
   const keywordBonus = Math.min(25, best.matchedKeywords.length * 8);
   const confidence = Math.min(95, baseConfidence + keywordBonus);
 
