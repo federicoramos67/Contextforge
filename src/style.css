@@ -390,6 +390,123 @@ li + li {
   color: #dbe7ff;
 }
 
+/* Botón discreto para abrir el panel de configuración de API */
+.config-open-btn {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: transparent;
+  color: #5a6e94;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.config-open-btn:hover {
+  color: #93a4c7;
+}
+
+.config-open-btn.open {
+  color: #b8cbff;
+}
+
+/* Panel expandible de configuración de keys */
+.config-panel {
+  margin-bottom: 18px;
+}
+
+.config-panel h3 {
+  margin: 0 0 16px;
+  font-size: 0.78rem;
+  color: #93a4c7;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.config-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #b9c4dc;
+  letter-spacing: 0.04em;
+}
+
+.config-field input {
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(3, 7, 18, 0.6);
+  color: #f8fbff;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.config-field input:focus {
+  border-color: rgba(108, 142, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(108, 142, 255, 0.08);
+}
+
+.config-field input::placeholder {
+  color: #3f516e;
+}
+
+/* Indicador de key ya guardada bajo el campo */
+.config-saved {
+  font-size: 0.72rem;
+  color: #5a6e94;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.04em;
+}
+
+.mode-toggle-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #93a4c7;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.mode-toggle-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-toggle-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mode-toggle-btn.active {
+  background: rgba(125, 161, 255, 0.15);
+  border-color: rgba(125, 161, 255, 0.3);
+  color: #b8cbff;
+}
+
 @media (max-width: 860px) {
   .hero,
   .layout {
