@@ -6,7 +6,9 @@
 [![Built with Vite](https://img.shields.io/badge/Vite-fast--dev-646CFF?logo=vite)](https://vitejs.dev/)
 [![AI-assisted workflow](https://img.shields.io/badge/Workflow-AI--assisted-blueviolet)](docs/CODEX_WORKFLOW.md)
 
-ContextForge is a local-first web tool that helps users prepare better context before asking an AI for help.
+**AI-assisted context engineering tool that helps users prepare better prompts, files, and workflows before using AI.**
+
+ContextForge is a hybrid context advisor: it works with local rules by default and can optionally use configured AI providers to classify a user's need and recommend the best context to share.
 
 Instead of sending a vague prompt directly to an AI model, the user writes a natural-language need and ContextForge recommends what files, formats, examples, constraints, and supporting material should be shared to obtain a better answer.
 
@@ -47,9 +49,9 @@ ContextForge returns:
 
 Current checkpoint: **v0.2**
 
-The app currently works locally with React, Vite and JSON-based rules.
+The app currently works locally with React, Vite and JSON-based rules, with an optional AI mode for configured providers.
 
-It does not use a backend, database, authentication, external AI API or remote processing. The classification logic runs locally in the browser.
+The default experience remains local-first and rule-based. AI providers are optional and should be configured deliberately by the user.
 
 ## Why this project matters
 
@@ -72,6 +74,8 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 ## Key features
 
 - Local rule-based prompt classification.
+- Optional AI provider mode.
+- Automatic fallback to local rules.
 - Category-specific recommendations.
 - Context quality scoring.
 - Checklist generation.
@@ -81,7 +85,7 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 - Display of detected keywords/signals.
 - Manual QA cases documented with a Python helper script.
 - Documented AI-assisted development workflow.
-- CI workflow that validates production builds.
+- CI workflow that validates production builds and tests.
 - Open-source project structure with contribution, security and issue templates.
 
 ## Example outputs
@@ -166,12 +170,14 @@ contextforge/
 │  │  └─ contextRules.json
 │  ├─ logic/
 │  │  ├─ classifyPrompt.js
+│  │  ├─ classifyWithAI.js
 │  │  ├─ exportMarkdown.js
 │  │  ├─ generateAdvice.js
 │  │  ├─ generateRefinedPrompt.js
 │  │  ├─ scoreContext.js
 │  │  └─ textUtils.js
 │  ├─ App.jsx
+│  ├─ config.js
 │  ├─ main.jsx
 │  └─ style.css
 ├─ docs/
@@ -179,6 +185,8 @@ contextforge/
 │  └─ ROADMAP.md
 ├─ tools/
 │  └─ classifier_manual_cases.py
+├─ tests/
+│  └─ classifyPrompt.test.js
 ├─ CHANGELOG.md
 ├─ CODE_OF_CONDUCT.md
 ├─ CONTRIBUTING.md
@@ -196,11 +204,12 @@ contextforge/
 
 1. The user writes a natural-language need.
 2. `classifyPrompt.js` compares the text against local category rules.
-3. `scoreContext.js` evaluates the quality of the prompt context.
-4. `generateAdvice.js` builds the recommendation object.
-5. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
-6. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
-7. `exportMarkdown.js` can generate an exportable report.
+3. Optional: `classifyWithAI.js` can use a configured AI provider and fall back to local rules if needed.
+4. `scoreContext.js` evaluates the quality of the prompt context.
+5. `generateAdvice.js` builds the recommendation object.
+6. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
+7. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
+8. `exportMarkdown.js` can generate an exportable report.
 
 ## Running locally
 
@@ -226,6 +235,12 @@ Create a production build:
 
 ```bash
 npm run build
+```
+
+Run tests:
+
+```bash
+npm test
 ```
 
 Preview production build:
@@ -276,11 +291,11 @@ That workflow is part of the value of the project: it shows how AI-assisted deve
 
 ## Current limitations
 
-- Classification is heuristic and rule-based.
+- Classification can run locally with heuristic rules, but AI mode depends on user-provided provider configuration.
 - Confidence is an approximation, not a statistical probability.
 - Some detected keywords can look technical or repetitive.
-- Automated unit tests are not implemented yet.
-- No backend or external AI API is integrated.
+- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider.
+- No backend is integrated yet.
 - Rules are edited manually in JSON.
 
 ## Roadmap
@@ -290,11 +305,11 @@ Planned or possible improvements:
 - Improve visual presentation of detected keywords.
 - Include diagnostic explanation and keywords in Markdown exports.
 - Add more manual QA cases.
-- Add automated tests for classification logic.
+- Expand automated tests for classification logic.
 - Improve category weighting and false-positive handling.
 - Add local history with `localStorage`.
 - Add beginner/professional modes.
-- Add AI-destination presets such as ChatGPT, Claude, Gemini, Manus or Codex.
+- Add safer provider configuration patterns.
 - Add screenshots and a public demo.
 
 ## Philosophy
