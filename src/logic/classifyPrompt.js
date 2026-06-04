@@ -10,8 +10,32 @@ function matchesKeyword(text, keyword) {
   return keywordParts.length > 1 && keywordParts.every((part) => text.includes(part));
 }
 
-function getKeywordWeight(keyword) {
+const documentPriorityKeywords = ['pdf', 'documento', 'informe', 'resumen', 'resumir', 'resumi', 'libro', 'manual', 'tesis', 'paper'];
+const strongWebKeywords = ['landing', 'seo', 'url', 'enlace', 'html', 'hero', 'cta', 'conversion', 'conversión'];
+const ambiguousWebPageKeywords = ['pagina', 'página'];
+
+function hasDocumentContext(text) {
+  return documentPriorityKeywords.some((keyword) => text.includes(normalizeText(keyword)));
+}
+
+function isSuppressedWebKeyword(rule, keyword, text) {
+  if (rule.id !== 'web_analysis' || !hasDocumentContext(text)) return false;
+
   const normalizedKeyword = normalizeText(keyword);
+  return ambiguousWebPageKeywords.map(normalizeText).includes(normalizedKeyword);
+}
+
+function getKeywordWeight(keyword, ruleId) {
+  const normalizedKeyword = normalizeText(keyword);
+
+  if (ruleId === 'long_document' && documentPriorityKeywords.map(normalizeText).includes(normalizedKeyword)) {
+    return 3;
+  }
+
+  if (ruleId === 'web_analysis' && strongWebKeywords.map(normalizeText).includes(normalizedKeyword)) {
+    return 3;
+  }
+
   return normalizedKeyword.length > 7 ? 2 : 1;
 }
 
@@ -29,10 +53,12 @@ export function classifyPrompt(text) {
   const scored = rules
     .filter((rule) => rule.id !== 'general_context')
     .map((rule) => {
-      const matchedKeywords = rule.keywords.filter((keyword) => matchesKeyword(normalized, keyword));
+      const matchedKeywords = rule.keywords.filter((keyword) => {
+        return matchesKeyword(normalized, keyword) && !isSuppressedWebKeyword(rule, keyword, normalized);
+      });
 
       const score = matchedKeywords.reduce((total, keyword) => {
-        return total + getKeywordWeight(keyword);
+        return total + getKeywordWeight(keyword, rule.id);
       }, 0);
 
       return { ...rule, score, matchedKeywords };
@@ -51,7 +77,7 @@ export function classifyPrompt(text) {
 
   // Calcula el máximo posible para esta categoría según el peso real de sus keywords.
   const maxPossibleScore = best.keywords.reduce((total, keyword) => {
-    return total + getKeywordWeight(keyword);
+    return total + getKeywordWeight(keyword, best.id);
   }, 0);
 
   const baseConfidence = Math.round((best.score / maxPossibleScore) * 100);

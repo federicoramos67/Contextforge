@@ -4,12 +4,14 @@ import ResultCard from './components/ResultCard';
 import Checklist from './components/Checklist';
 import ScorePanel from './components/ScorePanel';
 import PromptSuggestion from './components/PromptSuggestion';
+import MissingContextAudit from './components/MissingContextAudit';
 import { classifyPrompt } from './logic/classifyPrompt';
 import { classifyWithAI } from './logic/classifyWithAI';
 import { getActiveProvider, getAvailableProviders, getStoredKeys, STORAGE_KEY, ACTIVE_PROVIDER_KEY } from './config';
 import { scoreContext } from './logic/scoreContext';
 import { generateAdvice } from './logic/generateAdvice';
 import { generateRefinedPrompt } from './logic/generateRefinedPrompt';
+import { auditMissingContext } from './logic/auditMissingContext';
 import { buildMarkdownReport } from './logic/exportMarkdown';
 import './style.css';
 
@@ -84,6 +86,7 @@ export default function App() {
       advice: analysis.advice,
       scoreData: analysis.scoreData,
       refinedPrompt: analysis.refinedPrompt,
+      missingContextAudit: analysis.missingContextAudit,
     });
   }, [analysis, userText]);
 
@@ -111,8 +114,9 @@ export default function App() {
     const advice = generateAdvice(category);
     const scoreData = scoreContext(cleanText);
     const refinedPrompt = generateRefinedPrompt(cleanText, category);
+    const missingContextAudit = auditMissingContext(cleanText, category);
 
-    setAnalysis({ category, advice, scoreData, refinedPrompt });
+    setAnalysis({ category, advice, scoreData, refinedPrompt, missingContextAudit });
 
     if (!category._fallback) {
       setCopiedMessage('Análisis generado.');
@@ -200,7 +204,7 @@ export default function App() {
           </p>
         </div>
         <div className="hero-badge">
-          <span>v0.2</span>
+          <span>v0.3.0-alpha</span>
 
           {/* Segmented control: [Modo reglas] [● Modo IA · Mistral][⚙] */}
           <div className="mode-switcher">
@@ -340,6 +344,8 @@ export default function App() {
 
         <ResultCard advice={analysis?.advice} />
       </div>
+
+      <MissingContextAudit audit={analysis?.missingContextAudit} />
 
       {analysis && (
         <div className="layout secondary-layout">

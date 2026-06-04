@@ -27,6 +27,13 @@ Incluido en v0.1:
 
 ## Fase 2 — Mejoras de producto
 
+Incluido en v0.3.0-alpha:
+
+- Missing Context Auditor local.
+- Deteccion de contexto faltante a partir del checklist de la categoria.
+- Riesgos y preguntas de aclaracion antes de consultar a una IA.
+- Exportacion Markdown con la auditoria incluida.
+
 - Historial local.
 - Modo principiante/profesional.
 - Selector de IA destino.

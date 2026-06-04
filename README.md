@@ -47,11 +47,15 @@ ContextForge returns:
 
 ## Current status
 
-Current checkpoint: **v0.2**
+Current checkpoint: **v0.3.0-alpha**
 
 The app currently works locally with React, Vite and JSON-based rules, with an optional AI mode for configured providers.
 
 The default experience remains local-first and rule-based. AI providers are optional and should be configured deliberately by the user.
+
+### ContextForge v0.3.0-alpha — Missing Context Auditor
+
+This alpha adds a local Missing Context Auditor. After classifying a prompt, ContextForge now highlights likely missing context, explains the risks of asking an AI without it, and suggests practical clarification questions before exporting or copying the refined prompt.
 
 ## Why this project matters
 
@@ -79,6 +83,7 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 - Category-specific recommendations.
 - Context quality scoring.
 - Checklist generation.
+- Missing Context Auditor with local, rule-based fallback.
 - Refined prompt generation.
 - Markdown export support.
 - Explanation of why a category was detected.
@@ -207,9 +212,10 @@ contextforge/
 3. Optional: `classifyWithAI.js` can use a configured AI provider and fall back to local rules if needed.
 4. `scoreContext.js` evaluates the quality of the prompt context.
 5. `generateAdvice.js` builds the recommendation object.
-6. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
-7. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
-8. `exportMarkdown.js` can generate an exportable report.
+6. `auditMissingContext.js` detects likely missing checklist items and turns them into risks and questions.
+7. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
+8. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
+9. `exportMarkdown.js` can generate an exportable report including the missing-context audit.
 
 ## Running locally
 
