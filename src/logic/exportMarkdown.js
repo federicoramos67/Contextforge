@@ -2,7 +2,15 @@ function renderList(items) {
   return items?.length ? items.map((item) => `- ${item}`).join('\n') : '- Sin datos.';
 }
 
-export function buildMarkdownReport({ userText, advice, scoreData, refinedPrompt, missingContextAudit }) {
+export function buildMarkdownReport({
+  userText,
+  advice,
+  scoreData,
+  refinedPrompt,
+  missingContextAudit,
+  aiResponse,
+  responseEvaluation,
+}) {
   const auditSection = missingContextAudit
     ? `
 ## Auditoria de contexto faltante
@@ -15,6 +23,33 @@ ${renderList(missingContextAudit.riskWarnings)}
 
 ### Preguntas utiles antes de consultar a la IA
 ${renderList(missingContextAudit.clarificationQuestions)}
+`
+    : '';
+  const responseEvaluationSection = responseEvaluation
+    ? `
+## Evaluacion de respuesta de IA
+
+### Respuesta pegada
+\`\`\`text
+${aiResponse || ''}
+\`\`\`
+
+### Nivel de completitud
+${responseEvaluation.completionLevel}
+
+### Que respondio bien
+${renderList(responseEvaluation.strengths)}
+
+### Que falta o esta debil
+${renderList(responseEvaluation.missingOrWeakPoints)}
+
+### Riesgos
+${renderList(responseEvaluation.riskWarnings)}
+
+### Siguiente prompt recomendado
+\`\`\`text
+${responseEvaluation.nextPrompt}
+\`\`\`
 `
     : '';
 
@@ -55,5 +90,6 @@ ${auditSection}
 \`\`\`text
 ${refinedPrompt}
 \`\`\`
+${responseEvaluationSection}
 `;
 }

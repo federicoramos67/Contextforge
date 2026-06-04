@@ -42,6 +42,13 @@ Incluido en v0.3.0-alpha:
 
 ## Fase 3 — Motor más inteligente
 
+Incluido en v0.4.0-alpha:
+
+- AI Response Evaluator local.
+- Next Prompt Generator para continuar el ciclo de trabajo.
+- Evaluacion de completitud, fortalezas, puntos debiles y riesgos.
+- Exportacion Markdown con respuesta evaluada y siguiente prompt.
+
 - Mejorar clasificación con pesos por palabras.
 - Detectar múltiples categorías.
 - Detectar ambigüedad.

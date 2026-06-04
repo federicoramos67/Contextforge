@@ -380,15 +380,42 @@ li + li {
   margin-top: 18px;
 }
 
+.ai-response-card {
+  margin-top: 18px;
+}
+
+.ai-response-card textarea {
+  width: 100%;
+  min-height: 170px;
+  resize: vertical;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 18px;
+  background: rgba(3, 7, 18, 0.72);
+  color: #f8fbff;
+  outline: none;
+}
+
+.ai-response-card textarea:focus {
+  border-color: rgba(108, 142, 255, 0.85);
+  box-shadow: 0 0 0 4px rgba(108, 142, 255, 0.1);
+}
+
+.ai-evaluation-result {
+  margin-top: 18px;
+}
+
 .audit-card {
   margin-top: 18px;
 }
 
-.audit-card .result-grid {
+.audit-card .result-grid,
+.ai-response-card .result-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.prompt-card pre {
+.prompt-card pre,
+.next-prompt-box pre {
   white-space: pre-wrap;
   overflow-x: auto;
   padding: 18px;
@@ -396,6 +423,25 @@ li + li {
   background: rgba(3, 7, 18, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #dbe7ff;
+}
+
+.next-prompt-box pre {
+  margin: 10px 0 0;
+}
+
+.level-low {
+  background: rgba(255, 128, 128, 0.12);
+  color: #ffb3b3;
+}
+
+.level-medium {
+  background: rgba(255, 205, 107, 0.12);
+  color: #ffe3aa;
+}
+
+.level-high {
+  background: rgba(124, 255, 190, 0.12);
+  color: #a9ffd7;
 }
 
 /* Panel expandible de configuración de keys */
@@ -623,7 +669,8 @@ li + li {
     max-width: 220px;
   }
 
-  .audit-card .result-grid {
+  .audit-card .result-grid,
+  .ai-response-card .result-grid {
     grid-template-columns: 1fr;
   }
 

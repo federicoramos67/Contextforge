@@ -43,11 +43,12 @@ ContextForge returns:
 - detected keywords/signals;
 - context quality score;
 - checklist of material to prepare;
-- refined prompt ready to copy.
+- refined prompt ready to copy;
+- AI response evaluation and next prompt generation.
 
 ## Current status
 
-Current checkpoint: **v0.3.0-alpha**
+Current checkpoint: **v0.4.0-alpha**
 
 The app currently works locally with React, Vite and JSON-based rules, with an optional AI mode for configured providers.
 
@@ -56,6 +57,10 @@ The default experience remains local-first and rule-based. AI providers are opti
 ### ContextForge v0.3.0-alpha — Missing Context Auditor
 
 This alpha adds a local Missing Context Auditor. After classifying a prompt, ContextForge now highlights likely missing context, explains the risks of asking an AI without it, and suggests practical clarification questions before exporting or copying the refined prompt.
+
+### ContextForge v0.4.0-alpha — AI Response Evaluator
+
+This alpha closes the first local feedback loop: after using the refined prompt in an external AI, users can paste the AI response back into ContextForge. The app evaluates completion, weak points, risks and generates a next prompt locally with rules.
 
 ## Why this project matters
 
@@ -84,6 +89,7 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 - Context quality scoring.
 - Checklist generation.
 - Missing Context Auditor with local, rule-based fallback.
+- AI Response Evaluator and Next Prompt Generator.
 - Refined prompt generation.
 - Markdown export support.
 - Explanation of why a category was detected.
@@ -215,7 +221,8 @@ contextforge/
 6. `auditMissingContext.js` detects likely missing checklist items and turns them into risks and questions.
 7. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
 8. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
-9. `exportMarkdown.js` can generate an exportable report including the missing-context audit.
+9. `evaluateAIResponse.js` evaluates a pasted AI response and generates the next prompt.
+10. `exportMarkdown.js` can generate an exportable report including the missing-context audit and response evaluation.
 
 ## Running locally
 
