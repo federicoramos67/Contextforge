@@ -23,4 +23,25 @@ describe('classifyPrompt', () => {
 
     expect(result.id).toBe('general_context');
   });
+
+  it('prioritizes PDF summaries over web page analysis', () => {
+    const result = classifyPrompt('Necesito resumir un PDF de 200 páginas.');
+
+    expect(result.id).toBe('long_document');
+    expect(result.id).not.toBe('web_analysis');
+  });
+
+  it('detects document PDF summary prompts as long documents', () => {
+    const result = classifyPrompt('Resumí este documento PDF.');
+
+    expect(result.id).toBe('long_document');
+    expect(result.id).not.toBe('web_analysis');
+  });
+
+  it('keeps landing page analysis classified as web analysis', () => {
+    const result = classifyPrompt('Analizá esta landing page.');
+
+    expect(result.id).toBe('web_analysis');
+    expect(result.id).not.toBe('long_document');
+  });
 });

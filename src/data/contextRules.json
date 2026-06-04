@@ -42,7 +42,7 @@
     "id": "long_document",
     "label": "Documento largo / PDF / informe",
     "description": "El usuario quiere resumir, corregir o analizar documentos largos.",
-    "keywords": ["pdf", "documento", "informe", "tesis", "manual", "libro", "resumen", "contrato", "texto largo", "articulo", "artículo", "paper", "normativa", "archivo"],
+    "keywords": ["pdf", "documento", "informe", "tesis", "manual", "libro", "resumen", "resumir", "resumi", "contrato", "texto largo", "articulo", "artículo", "paper", "normativa", "archivo"],
     "primaryFormats": ["PDF con texto seleccionable", "Texto copiado en Markdown si es posible"],
     "secondaryFormats": ["Índice o secciones importantes", "Objetivo de lectura", "Preguntas específicas", "Criterio de resumen"],
     "avoid": ["PDF escaneado borroso", "Pedir 'resumí todo' sin objetivo", "Mandar páginas sueltas sin orden"],
