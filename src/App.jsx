@@ -5,6 +5,7 @@ import Checklist from './components/Checklist';
 import ScorePanel from './components/ScorePanel';
 import PromptSuggestion from './components/PromptSuggestion';
 import MissingContextAudit from './components/MissingContextAudit';
+import AIResponseEvaluator from './components/AIResponseEvaluator';
 import { classifyPrompt } from './logic/classifyPrompt';
 import { classifyWithAI } from './logic/classifyWithAI';
 import { getActiveProvider, getAvailableProviders, getStoredKeys, STORAGE_KEY, ACTIVE_PROVIDER_KEY } from './config';
@@ -12,6 +13,7 @@ import { scoreContext } from './logic/scoreContext';
 import { generateAdvice } from './logic/generateAdvice';
 import { generateRefinedPrompt } from './logic/generateRefinedPrompt';
 import { auditMissingContext } from './logic/auditMissingContext';
+import { evaluateAIResponse } from './logic/evaluateAIResponse';
 import { buildMarkdownReport } from './logic/exportMarkdown';
 import './style.css';
 
@@ -62,6 +64,8 @@ export default function App() {
   const [analysis, setAnalysis] = useState(null);
   const [copiedMessage, setCopiedMessage] = useState('');
   const [useAI, setUseAI] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [responseEvaluation, setResponseEvaluation] = useState(null);
 
   // Estado del panel de configuración
   const [showConfig, setShowConfig] = useState(false);
@@ -87,8 +91,10 @@ export default function App() {
       scoreData: analysis.scoreData,
       refinedPrompt: analysis.refinedPrompt,
       missingContextAudit: analysis.missingContextAudit,
+      aiResponse,
+      responseEvaluation,
     });
-  }, [analysis, userText]);
+  }, [analysis, aiResponse, responseEvaluation, userText]);
 
   async function analyze() {
     const cleanText = userText.trim();
@@ -116,6 +122,7 @@ export default function App() {
     const refinedPrompt = generateRefinedPrompt(cleanText, category);
     const missingContextAudit = auditMissingContext(cleanText, category);
 
+    setResponseEvaluation(null);
     setAnalysis({ category, advice, scoreData, refinedPrompt, missingContextAudit });
 
     if (!category._fallback) {
@@ -192,6 +199,21 @@ export default function App() {
     setCopiedMessage('Markdown descargado.');
   }
 
+  function evaluateResponse() {
+    if (!analysis) return;
+
+    const evaluation = evaluateAIResponse({
+      userText,
+      aiResponse,
+      category: analysis.category,
+      advice: analysis.advice,
+      missingContextAudit: analysis.missingContextAudit,
+    });
+
+    setResponseEvaluation(evaluation);
+    setCopiedMessage('Respuesta evaluada.');
+  }
+
   return (
     <main className="app-shell">
       <header className="hero">
@@ -204,7 +226,7 @@ export default function App() {
           </p>
         </div>
         <div className="hero-badge">
-          <span>v0.3.0-alpha</span>
+          <span>v0.4.0-alpha</span>
 
           {/* Segmented control: [Modo reglas] [● Modo IA · Mistral][⚙] */}
           <div className="mode-switcher">
@@ -360,6 +382,19 @@ export default function App() {
         onCopyReport={() => copyToClipboard(markdownReport, 'Diagnóstico completo copiado en Markdown.')}
         onDownloadMarkdown={downloadMarkdown}
       />
+
+      {analysis && (
+        <AIResponseEvaluator
+          aiResponse={aiResponse}
+          evaluation={responseEvaluation}
+          onChangeResponse={(value) => {
+            setAiResponse(value);
+            setResponseEvaluation(null);
+          }}
+          onEvaluate={evaluateResponse}
+          onCopyNextPrompt={() => copyToClipboard(responseEvaluation.nextPrompt, 'Siguiente prompt copiado.')}
+        />
+      )}
     </main>
   );
 }
