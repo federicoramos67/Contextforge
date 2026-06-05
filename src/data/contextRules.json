@@ -26,6 +26,19 @@
     "expectedOutput": "observaciones priorizadas, cambios concretos y guía paso a paso"
   },
   {
+    "id": "marketing_campaign",
+    "label": "Marketing / campañas / email comercial",
+    "description": "El usuario quiere crear, mejorar o analizar campañas, emails comerciales, newsletters, anuncios o piezas de conversión.",
+    "keywords": ["campaña", "campana", "email", "correo", "newsletter", "marketing", "clientes", "suscripción", "suscripcion", "suscripciones", "renovar", "cta", "llamada a la acción", "llamada a la accion", "anuncio", "copy", "conversión", "conversion"],
+    "primaryFormats": ["Objetivo de la campaña", "Público objetivo", "Oferta o propuesta de valor", "CTA"],
+    "secondaryFormats": ["Tono de marca", "Canal de publicación", "Restricciones comerciales o legales", "Ejemplo de campaña anterior"],
+    "avoid": ["Pedir 'hacelo vendedor' sin público ni oferta", "No definir CTA", "No incluir restricciones comerciales", "No aclarar tono de marca"],
+    "checklist": ["Objetivo", "Público objetivo", "Oferta", "Tono", "CTA", "Canal", "Restricciones", "Referencia anterior si existe"],
+    "reason": "Las campañas comerciales necesitan objetivo, audiencia, oferta, tono, CTA y restricciones para producir copy accionable y medible.",
+    "role": "Actúa como estratega de marketing, copywriter y consultor de campañas.",
+    "expectedOutput": "brief de campaña, propuesta de copy, estructura del mensaje, variantes y checklist de publicación"
+  },
+  {
     "id": "web_analysis",
     "label": "Análisis de página web / conversión / SEO",
     "description": "El usuario quiere evaluar una web, landing page, contenido online, SEO o conversión.",

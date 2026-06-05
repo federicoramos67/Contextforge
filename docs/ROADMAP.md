@@ -57,6 +57,13 @@ Incluido en v0.4.0-alpha:
 
 ## Fase 4 — Calidad y mantenimiento
 
+Incluido en v0.5.0-alpha:
+
+- Context Autofill from Reference Material.
+- Extraccion local de audiencia, tono, CTA, formato y restricciones.
+- Prompt actualizado con contexto inferido desde material pegado.
+- Exportacion Markdown con material de referencia y contexto rellenado.
+
 - Agregar tests unitarios.
 - Agregar `npm run lint`.
 - Separar estilos por componentes.

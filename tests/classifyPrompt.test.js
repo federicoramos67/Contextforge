@@ -44,4 +44,29 @@ describe('classifyPrompt', () => {
     expect(result.id).toBe('web_analysis');
     expect(result.id).not.toBe('long_document');
   });
+
+  it('detects email subscription renewal campaigns as marketing campaigns', () => {
+    const result = classifyPrompt('Quiero crear una campaña de email para renovar suscripciones vencidas.');
+
+    expect(result.id).toBe('marketing_campaign');
+    expect(result.id).not.toBe('visual_ui');
+  });
+
+  it('detects previous campaign material with CTA as marketing campaign', () => {
+    const result = classifyPrompt('Campaña anterior para clientes existentes con CTA renovar ahora.');
+
+    expect(result.id).toBe('marketing_campaign');
+  });
+
+  it('keeps landing page improvement classified as web analysis', () => {
+    const result = classifyPrompt('Necesito mejorar una landing page.');
+
+    expect(result.id).toBe('web_analysis');
+  });
+
+  it('still detects explicit UI redesign prompts as visual UI', () => {
+    const result = classifyPrompt('Necesito rediseñar una UI de una app.');
+
+    expect(result.id).toBe('visual_ui');
+  });
 });

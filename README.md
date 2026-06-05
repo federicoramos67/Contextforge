@@ -44,11 +44,12 @@ ContextForge returns:
 - context quality score;
 - checklist of material to prepare;
 - refined prompt ready to copy;
+- context autofill from pasted reference material;
 - AI response evaluation and next prompt generation.
 
 ## Current status
 
-Current checkpoint: **v0.4.0-alpha**
+Current checkpoint: **v0.5.0-alpha**
 
 The app currently works locally with React, Vite and JSON-based rules, with an optional AI mode for configured providers.
 
@@ -61,6 +62,10 @@ This alpha adds a local Missing Context Auditor. After classifying a prompt, Con
 ### ContextForge v0.4.0-alpha — AI Response Evaluator
 
 This alpha closes the first local feedback loop: after using the refined prompt in an external AI, users can paste the AI response back into ContextForge. The app evaluates completion, weak points, risks and generates a next prompt locally with rules.
+
+### ContextForge v0.5.0-alpha — Context Autofill
+
+This alpha adds local Context Autofill from pasted reference material. Users can paste a prior campaign, brief, email, client text or base documentation, and ContextForge extracts useful signals, fills some missing context and generates an updated prompt.
 
 ## Why this project matters
 
@@ -89,6 +94,7 @@ The goal is not to replace an AI assistant. The goal is to improve the input bef
 - Context quality scoring.
 - Checklist generation.
 - Missing Context Auditor with local, rule-based fallback.
+- Context Autofill from pasted reference material.
 - AI Response Evaluator and Next Prompt Generator.
 - Refined prompt generation.
 - Markdown export support.
@@ -167,48 +173,57 @@ Recommended context:
 
 ```text
 contextforge/
-├─ .github/
-│  ├─ ISSUE_TEMPLATE/
-│  └─ workflows/
-├─ src/
-│  ├─ components/
-│  │  ├─ Checklist.jsx
-│  │  ├─ PromptInput.jsx
-│  │  ├─ PromptSuggestion.jsx
-│  │  ├─ ResultCard.jsx
-│  │  └─ ScorePanel.jsx
-│  ├─ data/
-│  │  └─ contextRules.json
-│  ├─ logic/
-│  │  ├─ classifyPrompt.js
-│  │  ├─ classifyWithAI.js
-│  │  ├─ exportMarkdown.js
-│  │  ├─ generateAdvice.js
-│  │  ├─ generateRefinedPrompt.js
-│  │  ├─ scoreContext.js
-│  │  └─ textUtils.js
-│  ├─ App.jsx
-│  ├─ config.js
-│  ├─ main.jsx
-│  └─ style.css
-├─ docs/
-│  ├─ CODEX_WORKFLOW.md
-│  └─ ROADMAP.md
-├─ tools/
-│  └─ classifier_manual_cases.py
-├─ tests/
-│  └─ classifyPrompt.test.js
-├─ CHANGELOG.md
-├─ CODE_OF_CONDUCT.md
-├─ CONTRIBUTING.md
-├─ LICENSE
-├─ SECURITY.md
-├─ SUPPORT.md
-├─ package.json
-├─ package-lock.json
-├─ index.html
-├─ vite.config.js
-└─ README.md
+|- .github/
+|  |- ISSUE_TEMPLATE/
+|  `- workflows/
+|- src/
+|  |- components/
+|  |  |- AIResponseEvaluator.jsx
+|  |  |- Checklist.jsx
+|  |  |- ContextAutofill.jsx
+|  |  |- MissingContextAudit.jsx
+|  |  |- PromptInput.jsx
+|  |  |- PromptSuggestion.jsx
+|  |  |- ResultCard.jsx
+|  |  `- ScorePanel.jsx
+|  |- data/
+|  |  `- contextRules.json
+|  |- logic/
+|  |  |- auditMissingContext.js
+|  |  |- autofillContextFromReference.js
+|  |  |- classifyPrompt.js
+|  |  |- classifyWithAI.js
+|  |  |- evaluateAIResponse.js
+|  |  |- exportMarkdown.js
+|  |  |- generateAdvice.js
+|  |  |- generateRefinedPrompt.js
+|  |  |- scoreContext.js
+|  |  `- textUtils.js
+|  |- App.jsx
+|  |- config.js
+|  |- main.jsx
+|  `- style.css
+|- docs/
+|  |- CODEX_WORKFLOW.md
+|  `- ROADMAP.md
+|- tools/
+|  `- classifier_manual_cases.py
+|- tests/
+|  |- auditMissingContext.test.js
+|  |- autofillContextFromReference.test.js
+|  |- classifyPrompt.test.js
+|  `- evaluateAIResponse.test.js
+|- CHANGELOG.md
+|- CODE_OF_CONDUCT.md
+|- CONTRIBUTING.md
+|- LICENSE
+|- SECURITY.md
+|- SUPPORT.md
+|- package.json
+|- package-lock.json
+|- index.html
+|- vite.config.js
+`- README.md
 ```
 
 ## How it works
@@ -219,10 +234,11 @@ contextforge/
 4. `scoreContext.js` evaluates the quality of the prompt context.
 5. `generateAdvice.js` builds the recommendation object.
 6. `auditMissingContext.js` detects likely missing checklist items and turns them into risks and questions.
-7. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
-8. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
-9. `evaluateAIResponse.js` evaluates a pasted AI response and generates the next prompt.
-10. `exportMarkdown.js` can generate an exportable report including the missing-context audit and response evaluation.
+7. `autofillContextFromReference.js` extracts useful context from pasted reference material.
+8. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
+9. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
+10. `evaluateAIResponse.js` evaluates a pasted AI response and generates the next prompt.
+11. `exportMarkdown.js` can generate an exportable report including audits, autofill and response evaluation.
 
 ## Running locally
 

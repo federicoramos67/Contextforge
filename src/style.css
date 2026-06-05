@@ -380,11 +380,13 @@ li + li {
   margin-top: 18px;
 }
 
-.ai-response-card {
+.ai-response-card,
+.context-autofill-card {
   margin-top: 18px;
 }
 
-.ai-response-card textarea {
+.ai-response-card textarea,
+.context-autofill-card textarea {
   width: 100%;
   min-height: 170px;
   resize: vertical;
@@ -396,12 +398,14 @@ li + li {
   outline: none;
 }
 
-.ai-response-card textarea:focus {
+.ai-response-card textarea:focus,
+.context-autofill-card textarea:focus {
   border-color: rgba(108, 142, 255, 0.85);
   box-shadow: 0 0 0 4px rgba(108, 142, 255, 0.1);
 }
 
-.ai-evaluation-result {
+.ai-evaluation-result,
+.context-autofill-result {
   margin-top: 18px;
 }
 
@@ -410,8 +414,37 @@ li + li {
 }
 
 .audit-card .result-grid,
-.ai-response-card .result-grid {
+.ai-response-card .result-grid,
+.context-autofill-card .result-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.context-autofill-secondary {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.context-definition-list {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.context-definition-list div {
+  display: grid;
+  gap: 3px;
+}
+
+.context-definition-list dt {
+  color: #93a4c7;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.context-definition-list dd {
+  margin: 0;
+  color: #dbe7ff;
 }
 
 .prompt-card pre,
@@ -670,7 +703,8 @@ li + li {
   }
 
   .audit-card .result-grid,
-  .ai-response-card .result-grid {
+  .ai-response-card .result-grid,
+  .context-autofill-card .result-grid {
     grid-template-columns: 1fr;
   }
 
