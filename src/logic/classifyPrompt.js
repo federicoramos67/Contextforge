@@ -4,6 +4,10 @@ import { normalizeText } from './textUtils';
 function matchesKeyword(text, keyword) {
   const normalizedKeyword = normalizeText(keyword);
 
+  if (normalizedKeyword.length <= 3) {
+    return new RegExp(`(^|\\s)${normalizedKeyword}(?=\\s|$)`).test(text);
+  }
+
   if (text.includes(normalizedKeyword)) return true;
 
   const keywordParts = normalizedKeyword.split(' ');
@@ -11,6 +15,7 @@ function matchesKeyword(text, keyword) {
 }
 
 const documentPriorityKeywords = ['pdf', 'documento', 'informe', 'resumen', 'resumir', 'resumi', 'libro', 'manual', 'tesis', 'paper'];
+const marketingPriorityKeywords = ['campana', 'campaña', 'email', 'correo', 'newsletter', 'marketing', 'clientes', 'suscripcion', 'suscripción', 'suscripciones', 'renovar', 'cta', 'llamada a la accion', 'llamada a la acción'];
 const strongWebKeywords = ['landing', 'seo', 'url', 'enlace', 'html', 'hero', 'cta', 'conversion', 'conversión'];
 const ambiguousWebPageKeywords = ['pagina', 'página'];
 
@@ -30,6 +35,10 @@ function getKeywordWeight(keyword, ruleId) {
 
   if (ruleId === 'long_document' && documentPriorityKeywords.map(normalizeText).includes(normalizedKeyword)) {
     return 3;
+  }
+
+  if (ruleId === 'marketing_campaign' && marketingPriorityKeywords.map(normalizeText).includes(normalizedKeyword)) {
+    return 4;
   }
 
   if (ruleId === 'web_analysis' && strongWebKeywords.map(normalizeText).includes(normalizedKeyword)) {

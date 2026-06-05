@@ -2,12 +2,24 @@ function renderList(items) {
   return items?.length ? items.map((item) => `- ${item}`).join('\n') : '- Sin datos.';
 }
 
+function renderInferredContext(inferredContext = {}) {
+  const rows = Object.entries(inferredContext).filter(([, value]) => {
+    return Array.isArray(value) ? value.length > 0 : Boolean(value);
+  });
+
+  return rows.length
+    ? rows.map(([key, value]) => `- ${key}: ${Array.isArray(value) ? value.join('; ') : value}`).join('\n')
+    : '- Sin contexto inferido.';
+}
+
 export function buildMarkdownReport({
   userText,
   advice,
   scoreData,
   refinedPrompt,
   missingContextAudit,
+  referenceText,
+  contextAutofill,
   aiResponse,
   responseEvaluation,
 }) {
@@ -23,6 +35,30 @@ ${renderList(missingContextAudit.riskWarnings)}
 
 ### Preguntas utiles antes de consultar a la IA
 ${renderList(missingContextAudit.clarificationQuestions)}
+`
+    : '';
+  const contextAutofillSection = contextAutofill
+    ? `
+## Contexto rellenado desde material de referencia
+
+### Material de referencia pegado
+\`\`\`text
+${referenceText || ''}
+\`\`\`
+
+### Contexto inferido
+${renderInferredContext(contextAutofill.inferredContext)}
+
+### Huecos rellenados
+${renderList(contextAutofill.filledItems)}
+
+### Huecos todavia faltantes
+${renderList(contextAutofill.stillMissingItems)}
+
+### Prompt actualizado
+\`\`\`text
+${contextAutofill.updatedPrompt}
+\`\`\`
 `
     : '';
   const responseEvaluationSection = responseEvaluation
@@ -90,6 +126,7 @@ ${auditSection}
 \`\`\`text
 ${refinedPrompt}
 \`\`\`
+${contextAutofillSection}
 ${responseEvaluationSection}
 `;
 }
