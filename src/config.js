@@ -44,7 +44,7 @@ const CONFIG = {
     id: 'anthropic',
     name: 'Anthropic',
     key: import.meta.env.VITE_ANTHROPIC_KEY,
-    model: 'claude-haiku-3-5-20251001',
+    model: 'claude-haiku-4-5-20251001',
   },
   openai: {
     id: 'openai',
