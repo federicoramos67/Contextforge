@@ -38,7 +38,7 @@ const CONFIG = {
     id: 'gemini',
     name: 'Gemini',
     key: import.meta.env.VITE_GEMINI_KEY,
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
   },
   anthropic: {
     id: 'anthropic',
