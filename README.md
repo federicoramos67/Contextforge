@@ -323,7 +323,7 @@ That workflow is part of the value of the project: it shows how AI-assisted deve
 - Classification can run locally with heuristic rules, but AI mode depends on user-provided provider configuration.
 - Confidence is an approximation, not a statistical probability.
 - Some detected keywords can look technical or repetitive.
-- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider.
+- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider. Anthropic in particular is called with the `anthropic-dangerous-direct-browser-access` header, which is intended for **local use only**: it sends your API key from the browser, so never build for a public deployment with an Anthropic key configured.
 - No backend is integrated yet.
 - Rules are edited manually in JSON.
 

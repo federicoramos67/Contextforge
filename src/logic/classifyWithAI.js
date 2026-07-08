@@ -100,6 +100,10 @@ async function callAnthropic(provider, systemPrompt, userText) {
     headers: {
       'x-api-key': provider.key,
       'anthropic-version': '2023-06-01',
+      // Anthropic bloquea por CORS las llamadas directas desde el navegador
+      // salvo que se declare explicitamente este header. Solo apto para uso
+      // local: expone la API key en el cliente. Ver README (seccion seguridad).
+      'anthropic-dangerous-direct-browser-access': 'true',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
