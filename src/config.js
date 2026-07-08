@@ -26,7 +26,7 @@ const CONFIG = {
     id: 'groq',
     name: 'Groq',
     key: import.meta.env.VITE_GROQ_KEY,
-    model: 'llama3-8b-8192',
+    model: 'openai/gpt-oss-20b',
   },
   mistral: {
     id: 'mistral',
