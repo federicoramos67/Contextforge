@@ -38,7 +38,7 @@ Never invent categories outside the list.`;
 }
 
 // Intenta extraer un objeto JSON de texto que puede incluir markdown o texto extra
-function extractJSON(text) {
+export function extractJSON(text) {
   try {
     return JSON.parse(text.trim());
   } catch {}
