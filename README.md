@@ -266,6 +266,12 @@ Create a production build:
 npm run build
 ```
 
+> ⚠️ **Never build for a public deployment with keys in your `.env`.** Vite
+> inlines every `VITE_*` variable into the generated JavaScript bundle, so any
+> key present at build time would be exposed in plain text in the published
+> `dist/`. For a public demo, build **without** a `.env` — the local rules mode
+> works with no keys. See [SECURITY.md](SECURITY.md) for details.
+
 Run tests:
 
 ```bash
