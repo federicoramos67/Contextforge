@@ -117,7 +117,7 @@ export default function App() {
       setCopiedMessage(`Analizando con ${activeProvider.name}...`);
       category = await classifyWithAI(cleanText);
       if (category._fallback) {
-        setCopiedMessage('No se pudo conectar con la IA. Usando modo reglas.');
+        setCopiedMessage(`Modo IA no disponible (${category._fallbackReason}). Se usó el modo reglas local.`);
       }
     } else {
       category = classifyPrompt(cleanText);
@@ -373,6 +373,16 @@ export default function App() {
       )}
 
       {copiedMessage && <div className="status-message">{copiedMessage}</div>}
+
+      {/* Aviso persistente: el análisis mostrado se generó por fallback a reglas
+          porque el Modo IA falló. A diferencia de status-message, no se pisa con
+          la siguiente acción, así el usuario se entera del motivo real. */}
+      {analysis?.category?._fallback && (
+        <div className="fallback-notice" role="status">
+          <strong>Modo IA no disponible.</strong> Este resultado se generó con el
+          modo reglas local. Motivo: {analysis.category._fallbackReason}
+        </div>
+      )}
 
       <div className="layout">
         <PromptInput

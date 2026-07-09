@@ -197,6 +197,17 @@ button {
   color: #d9e4ff;
 }
 
+/* Aviso persistente de fallback de la IA: reutiliza la paleta de advertencia
+   naranja de .warning-card con la forma de .status-message. */
+.fallback-notice {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(255, 184, 108, 0.12);
+  border: 1px solid rgba(255, 184, 108, 0.28);
+  color: #ffd9a8;
+}
+
 .empty-state {
   min-height: 320px;
   display: grid;
