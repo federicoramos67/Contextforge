@@ -17,38 +17,9 @@ import { auditMissingContext } from './logic/auditMissingContext';
 import { evaluateAIResponse } from './logic/evaluateAIResponse';
 import { autofillContextFromReference } from './logic/autofillContextFromReference';
 import { buildMarkdownReport } from './logic/exportMarkdown';
+import { examples } from './constants/examples';
+import { CONFIG_PROVIDERS, EMPTY_FORM } from './constants/providers';
 import './style.css';
-
-const examples = [
-  {
-    label: 'Landing page',
-    text: 'Quiero que una IA revise mi landing page y me diga por qué no convierte. Necesito recomendaciones priorizadas para mejorar el hero y el CTA.',
-  },
-  {
-    label: 'Error de código',
-    text: 'Tengo un error en una app React con Vite. Quiero que una IA me ayude a corregir el bug y me explique qué archivo tocar.',
-  },
-  {
-    label: 'Documento PDF',
-    text: 'Necesito que una IA resuma un informe PDF largo y me saque las ideas principales en formato académico.',
-  },
-  {
-    label: 'Automatización',
-    text: 'Quiero automatizar un flujo en n8n para tomar datos de un formulario y generar una respuesta automática.',
-  },
-];
-
-// Definición de campos del panel de configuración
-const CONFIG_PROVIDERS = [
-  { id: 'mistral',   label: 'Mistral',          type: 'password', placeholder: 'VITE_MISTRAL_KEY' },
-  { id: 'groq',      label: 'Groq',             type: 'password', placeholder: 'VITE_GROQ_KEY' },
-  { id: 'gemini',    label: 'Google Gemini',    type: 'password', placeholder: 'VITE_GEMINI_KEY' },
-  { id: 'anthropic', label: 'Anthropic',        type: 'password', placeholder: 'VITE_ANTHROPIC_KEY' },
-  { id: 'openai',    label: 'OpenAI',           type: 'password', placeholder: 'VITE_OPENAI_KEY' },
-  { id: 'ollama',    label: 'Ollama (URL local)',type: 'text',     placeholder: 'http://localhost:11434' },
-];
-
-const EMPTY_FORM = { mistral: '', groq: '', gemini: '', anthropic: '', openai: '', ollama: '' };
 
 // Enmascara una key mostrando solo los últimos 4 caracteres
 function maskKey(value) {
