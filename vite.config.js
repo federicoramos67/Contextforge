@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  // El sitio se sirve desde https://federicoramos67.github.io/Contextforge/,
+  // por lo que los assets del bundle necesitan este prefijo de ruta.
+  base: '/Contextforge/',
   plugins: [react()],
   test: {
     coverage: {
