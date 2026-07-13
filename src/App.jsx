@@ -8,6 +8,7 @@ import MissingContextAudit from './components/MissingContextAudit';
 import AIResponseEvaluator from './components/AIResponseEvaluator';
 import ContextAutofill from './components/ContextAutofill';
 import ProviderSettings from './components/ProviderSettings';
+import ModeSwitcher from './components/ModeSwitcher';
 import { getActiveProvider, getStoredKeys, ACTIVE_PROVIDER_KEY } from './config';
 import { useAnalysis } from './hooks/useAnalysis';
 import { examples } from './constants/examples';
@@ -63,66 +64,15 @@ export default function App() {
           </p>
         </div>
         <div className="hero-badge">
-          <span>v0.5.0-alpha</span>
+          <span>v0.5.1-alpha</span>
 
-          {/* Segmented control: [Modo reglas] [● Modo IA · Mistral][⚙] */}
-          <div className="mode-switcher">
-            {/* Segmento izquierdo: siempre visible */}
-            <button
-              className={`mode-btn${!useAI ? ' active' : ''}`}
-              onClick={() => setUseAI(false)}
-              title="Usar clasificación local por reglas"
-            >
-              Modo reglas
-            </button>
-
-            {/* Segmento derecho: botón IA + sufijo gear formando una sola unidad pill */}
-            <div className="mode-ai-group">
-              {/*
-                Estado 1 — sin proveedor: "Modo IA ⚙", click abre config
-                Estado 2 — proveedor listo, modo reglas: "● Modo IA · X", click activa IA
-                Estado 3 — modo IA activo: "● X" con punto pulsante
-              */}
-              <button
-                className={`mode-btn mode-btn-ai${useAI && activeProvider ? ' active' : ''}${activeProvider ? ' with-gear' : ''}`}
-                onClick={() => {
-                  if (!activeProvider) {
-                    setShowConfig((s) => !s);
-                  } else {
-                    setUseAI(true);
-                  }
-                }}
-                title={
-                  !activeProvider
-                    ? 'Configurá una API key para activar el Modo IA'
-                    : `Activar Modo IA — ${activeProvider.name}`
-                }
-              >
-                {!activeProvider ? (
-                  // Estado 1: sin proveedor
-                  <>Modo IA <span className="mode-gear-inline">⚙</span></>
-                ) : useAI ? (
-                  // Estado 3: IA activa, dot pulsante + nombre abreviado
-                  <><span className="mode-dot mode-dot--pulse" />{activeProvider.name.length > 7 ? activeProvider.name.slice(0, 6) + '…' : activeProvider.name}</>
-                ) : (
-                  // Estado 2: proveedor listo, modo reglas activo
-                  <><span className="mode-dot" />Modo IA · {activeProvider.name.length > 7 ? activeProvider.name.slice(0, 6) + '…' : activeProvider.name}</>
-                )}
-              </button>
-
-              {/* Sufijo ⚙: tercer segmento del pill, abre config sin cambiar modo */}
-              {activeProvider && (
-                <button
-                  className={`mode-gear-btn${showConfig ? ' open' : ''}`}
-                  onClick={() => setShowConfig((s) => !s)}
-                  title="Configurar proveedores de IA"
-                  aria-label="Configurar API"
-                >
-                  ⚙
-                </button>
-              )}
-            </div>
-          </div>
+          <ModeSwitcher
+            useAI={useAI}
+            setUseAI={setUseAI}
+            activeProvider={activeProvider}
+            showConfig={showConfig}
+            setShowConfig={setShowConfig}
+          />
         </div>
       </header>
 
