@@ -510,6 +510,18 @@ li + li {
   font-weight: 800;
 }
 
+/* Aviso de seguridad sobre el almacenamiento local de las keys */
+.config-security-note {
+  margin: 0 0 16px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(108, 142, 255, 0.08);
+  border: 1px solid rgba(108, 142, 255, 0.2);
+  color: #b9c4dc;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .config-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
