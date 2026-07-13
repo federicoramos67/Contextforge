@@ -14,11 +14,20 @@ Instead of sending a vague prompt directly to an AI model, the user writes a nat
 
 The project is also a documented example of building software with AI assistance using small, verifiable steps, manual validation, Git checkpoints and progressive documentation.
 
+## Live demo
+
+**▶️ [Demo en vivo](https://federicoramos67.github.io/Contextforge/)** — `https://federicoramos67.github.io/Contextforge/`
+
+The public demo runs in **rules mode (no API key required)**: it classifies your
+need and recommends context using local heuristics only. The optional **AI mode**
+requires each user to provide their own provider API key, which is stored locally
+in the browser (`localStorage`) and never sent to any ContextForge server.
+
 ## Preview
 
 > Demo screenshots/GIFs will be added as the UI stabilizes.
 
-For now, ContextForge runs locally with Vite at:
+You can also run ContextForge locally with Vite at:
 
 ```text
 http://localhost:5173/

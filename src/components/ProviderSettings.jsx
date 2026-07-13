@@ -89,6 +89,12 @@ export default function ProviderSettings({
     <section className="config-panel panel">
       <h3>Proveedores de IA</h3>
 
+      {/* Aviso de seguridad: las keys viven solo en el navegador del usuario */}
+      <p className="config-security-note">
+        🔒 Tu API key se guarda solo en este navegador (localStorage) y nunca se
+        envía a nuestros servidores. Usá keys con límite de gasto.
+      </p>
+
       {/* Selector de proveedor activo: visible cuando hay al menos uno configurado */}
       {available.length > 0 && (
         <div className="config-provider-select">
