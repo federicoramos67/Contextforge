@@ -266,6 +266,12 @@ Create a production build:
 npm run build
 ```
 
+> ⚠️ **Never build for a public deployment with keys in your `.env`.** Vite
+> inlines every `VITE_*` variable into the generated JavaScript bundle, so any
+> key present at build time would be exposed in plain text in the published
+> `dist/`. For a public demo, build **without** a `.env` — the local rules mode
+> works with no keys. See [SECURITY.md](SECURITY.md) for details.
+
 Run tests:
 
 ```bash
@@ -323,7 +329,7 @@ That workflow is part of the value of the project: it shows how AI-assisted deve
 - Classification can run locally with heuristic rules, but AI mode depends on user-provided provider configuration.
 - Confidence is an approximation, not a statistical probability.
 - Some detected keywords can look technical or repetitive.
-- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider.
+- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider. Anthropic in particular is called with the `anthropic-dangerous-direct-browser-access` header, which is intended for **local use only**: it sends your API key from the browser, so never build for a public deployment with an Anthropic key configured.
 - No backend is integrated yet.
 - Rules are edited manually in JSON.
 

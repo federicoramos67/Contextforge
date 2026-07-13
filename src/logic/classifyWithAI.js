@@ -4,6 +4,10 @@ import rules from '../data/contextRules.json';
 import { classifyPrompt } from './classifyPrompt';
 import { getActiveProvider } from '../config';
 
+// Tiempo maximo de espera por proveedor antes de abortar la llamada (ms).
+// Si un proveedor se cuelga, el fetch se corta y se dispara el fallback local.
+const REQUEST_TIMEOUT_MS = 30000;
+
 function buildSystemPrompt() {
   const categoryList = rules.map((r) => `- ${r.id}: ${r.label}`).join('\n');
 
@@ -34,7 +38,7 @@ Never invent categories outside the list.`;
 }
 
 // Intenta extraer un objeto JSON de texto que puede incluir markdown o texto extra
-function extractJSON(text) {
+export function extractJSON(text) {
   try {
     return JSON.parse(text.trim());
   } catch {}
@@ -67,6 +71,7 @@ async function callOllama(provider, systemPrompt, userText) {
       ],
       stream: false,
     }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Ollama ${res.status}`);
   const data = await res.json();
@@ -88,6 +93,7 @@ async function callOpenAICompat(endpoint, key, model, systemPrompt, userText) {
         { role: 'user', content: userText },
       ],
     }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`${endpoint} ${res.status}`);
   const data = await res.json();
@@ -100,6 +106,10 @@ async function callAnthropic(provider, systemPrompt, userText) {
     headers: {
       'x-api-key': provider.key,
       'anthropic-version': '2023-06-01',
+      // Anthropic bloquea por CORS las llamadas directas desde el navegador
+      // salvo que se declare explicitamente este header. Solo apto para uso
+      // local: expone la API key en el cliente. Ver README (seccion seguridad).
+      'anthropic-dangerous-direct-browser-access': 'true',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -108,6 +118,7 @@ async function callAnthropic(provider, systemPrompt, userText) {
       system: systemPrompt,
       messages: [{ role: 'user', content: userText }],
     }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Anthropic ${res.status}`);
   const data = await res.json();
@@ -123,6 +134,7 @@ async function callGemini(provider, systemPrompt, userText) {
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: [{ parts: [{ text: userText }] }],
     }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`Gemini ${res.status}`);
   const data = await res.json();
@@ -198,10 +210,15 @@ export async function classifyWithAI(text) {
       diagnosticExplanation: aiResult.diagnosticExplanation || '',
     };
   } catch (err) {
+    // AbortSignal.timeout rechaza con un TimeoutError cuando el proveedor
+    // no respondio a tiempo: lo traducimos a un mensaje claro para la UI.
+    const isTimeout = err.name === 'TimeoutError' || err.name === 'AbortError';
     return {
       ...classifyPrompt(text),
       _fallback: true,
-      _fallbackReason: err.message || 'Error desconocido',
+      _fallbackReason: isTimeout
+        ? `El proveedor no respondio en ${REQUEST_TIMEOUT_MS / 1000}s (timeout)`
+        : err.message || 'Error desconocido',
     };
   }
 }

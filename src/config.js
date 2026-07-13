@@ -26,7 +26,7 @@ const CONFIG = {
     id: 'groq',
     name: 'Groq',
     key: import.meta.env.VITE_GROQ_KEY,
-    model: 'llama3-8b-8192',
+    model: 'openai/gpt-oss-20b',
   },
   mistral: {
     id: 'mistral',
@@ -38,13 +38,13 @@ const CONFIG = {
     id: 'gemini',
     name: 'Gemini',
     key: import.meta.env.VITE_GEMINI_KEY,
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
   },
   anthropic: {
     id: 'anthropic',
     name: 'Anthropic',
     key: import.meta.env.VITE_ANTHROPIC_KEY,
-    model: 'claude-haiku-3-5-20251001',
+    model: 'claude-haiku-4-5-20251001',
   },
   openai: {
     id: 'openai',
