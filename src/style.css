@@ -72,7 +72,7 @@ h3 {
   min-width: 150px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
 }
@@ -108,7 +108,7 @@ h3 {
 
 .panel {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px;
+  border-radius: 8px;
   background: rgba(12, 18, 32, 0.78);
   box-shadow: 0 22px 80px rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(16px);
@@ -126,7 +126,7 @@ h3 {
   resize: vertical;
   min-height: 190px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 18px;
   background: rgba(3, 7, 18, 0.72);
   color: #f8fbff;
@@ -199,7 +199,7 @@ h3 {
 .status-message {
   margin-bottom: 18px;
   padding: 12px 16px;
-  border-radius: 18px;
+  border-radius: 8px;
   background: rgba(125, 161, 255, 0.13);
   border: 1px solid rgba(125, 161, 255, 0.24);
   color: #d9e4ff;
@@ -210,7 +210,7 @@ h3 {
 .fallback-notice {
   margin-bottom: 18px;
   padding: 12px 16px;
-  border-radius: 18px;
+  border-radius: 8px;
   background: rgba(255, 184, 108, 0.12);
   border: 1px solid rgba(255, 184, 108, 0.28);
   color: #ffd9a8;
@@ -255,7 +255,7 @@ h3 {
 .mini-card,
 .reason-box,
 .improvements {
-  border-radius: 22px;
+  border-radius: 8px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -339,7 +339,7 @@ li + li {
   align-items: center;
   gap: 10px;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.055);
 }
 
@@ -385,7 +385,7 @@ li + li {
   gap: 12px;
   align-items: flex-start;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.055);
 }
 
@@ -410,7 +410,7 @@ li + li {
   min-height: 170px;
   resize: vertical;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 18px;
   background: rgba(3, 7, 18, 0.72);
   color: #f8fbff;
@@ -471,7 +471,7 @@ li + li {
   white-space: pre-wrap;
   overflow-x: auto;
   padding: 18px;
-  border-radius: 20px;
+  border-radius: 8px;
   background: rgba(3, 7, 18, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #dbe7ff;
@@ -533,7 +533,7 @@ li + li {
 .config-field input {
   padding: 9px 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(3, 7, 18, 0.6);
   color: #f8fbff;
   font-size: 0.88rem;
@@ -568,7 +568,7 @@ li + li {
 .config-provider-select select {
   padding: 6px 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(3, 7, 18, 0.6);
   color: #f8fbff;
   font-size: 0.84rem;
@@ -594,7 +594,7 @@ li + li {
 .config-confirm {
   margin: 10px 0 0;
   padding: 8px 14px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(74, 222, 128, 0.1);
   border: 1px solid rgba(74, 222, 128, 0.2);
   color: #86efac;
