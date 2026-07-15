@@ -18,16 +18,43 @@ const documentPriorityKeywords = ['pdf', 'documento', 'informe', 'resumen', 'res
 const marketingPriorityKeywords = ['campana', 'campaña', 'email', 'correo', 'newsletter', 'marketing', 'clientes', 'suscripcion', 'suscripción', 'suscripciones', 'renovar', 'cta', 'llamada a la accion', 'llamada a la acción'];
 const strongWebKeywords = ['landing', 'seo', 'url', 'enlace', 'html', 'hero', 'cta', 'conversion', 'conversión'];
 const ambiguousWebPageKeywords = ['pagina', 'página'];
+// 'web' es demasiado genérica: aparece en visual_ui y web_analysis y no debería
+// dominar la clasificación por sí sola. Cuando el prompt trae señales fuertes de
+// automatización, se suprime para esas categorías y deja ganar a `automation`.
+const ambiguousGenericWebKeywords = ['web'];
+const automationSignalKeywords = ['webhook', 'flujo', 'planilla', 'trigger', 'automatiz', 'formulario'];
+const webKeywordSuppressedRules = ['visual_ui', 'web_analysis'];
 
 function hasDocumentContext(text) {
   return documentPriorityKeywords.some((keyword) => text.includes(normalizeText(keyword)));
 }
 
-function isSuppressedWebKeyword(rule, keyword, text) {
-  if (rule.id !== 'web_analysis' || !hasDocumentContext(text)) return false;
+function hasAutomationContext(text) {
+  return automationSignalKeywords.some((keyword) => text.includes(normalizeText(keyword)));
+}
 
+function isSuppressedWebKeyword(rule, keyword, text) {
   const normalizedKeyword = normalizeText(keyword);
-  return ambiguousWebPageKeywords.map(normalizeText).includes(normalizedKeyword);
+
+  // 'pagina'/'página' no cuentan para web_analysis cuando el prompt es un documento.
+  if (
+    rule.id === 'web_analysis' &&
+    hasDocumentContext(text) &&
+    ambiguousWebPageKeywords.map(normalizeText).includes(normalizedKeyword)
+  ) {
+    return true;
+  }
+
+  // 'web' no cuenta para categorías visuales/web cuando hay señales de automatización.
+  if (
+    webKeywordSuppressedRules.includes(rule.id) &&
+    ambiguousGenericWebKeywords.map(normalizeText).includes(normalizedKeyword) &&
+    hasAutomationContext(text)
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 function getKeywordWeight(keyword, ruleId) {
