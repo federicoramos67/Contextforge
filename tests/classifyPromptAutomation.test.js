@@ -72,4 +72,11 @@ describe('classifyPrompt - automatización y desambiguación de `web`', () => {
     expect(result.id).toBe('visual_ui');
     expect(result.matchedKeywords).toContain('web');
   });
+
+  it('un formulario que se rediseña sigue siendo diseño visual', () => {
+    // `formulario` es ambiguo (se diseña tanto como se automatiza) y no está entre
+    // las señales que suprimen `web`, así que este prompt visual no debe migrar.
+    const result = classifyPrompt('Quiero rediseñar el formulario de contacto de mi web, se ve feo.');
+    expect(result.id).toBe('visual_ui');
+  });
 });

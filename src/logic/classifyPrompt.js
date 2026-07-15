@@ -22,7 +22,7 @@ const ambiguousWebPageKeywords = ['pagina', 'página'];
 // dominar la clasificación por sí sola. Cuando el prompt trae señales fuertes de
 // automatización, se suprime para esas categorías y deja ganar a `automation`.
 const ambiguousGenericWebKeywords = ['web'];
-const automationSignalKeywords = ['webhook', 'flujo', 'planilla', 'trigger', 'automatiz', 'formulario'];
+const automationSignalKeywords = ['webhook', 'flujo', 'planilla', 'trigger', 'automatiz'];
 const webKeywordSuppressedRules = ['visual_ui', 'web_analysis'];
 
 function hasDocumentContext(text) {
