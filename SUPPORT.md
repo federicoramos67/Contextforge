@@ -1,33 +1,38 @@
 # Support
 
+**English** · [Español](SUPPORT.es.md)
+
 ## Getting help
 
-If you have questions, ideas or problems:
+1. Check the [README](README.md).
+2. Look through the [roadmap](docs/ROADMAP.md) — what you need may already be
+   planned or explicitly out of scope.
+3. Search the existing [issues](https://github.com/federicoramos67/Contextforge/issues).
+4. Open a new issue if none of the above answers it.
 
-1. Check the README.
-2. Review the roadmap and documentation.
-3. Open a GitHub issue if necessary.
+Questions in English or Spanish are equally welcome.
 
-## Recommended issue types
+## What to include in an issue
+
+The more of this you provide, the faster it gets resolved:
+
+- The original prompt you entered.
+- The category that was detected, and the one you expected.
+- The app language (ES / EN) and the mode used (rules / AI).
+- Browser and operating system.
+- Screenshots when the problem is visual.
+
+Never paste API keys, tokens or private data into an issue.
+
+## Useful issue types
 
 - Bug reports.
 - Feature requests.
-- Classification edge cases.
-- False positives.
+- Classification edge cases and false positives.
+- Translation mistakes or awkward wording in either language.
 - UX feedback.
 - Documentation improvements.
 
-## Before opening an issue
+## Security issues
 
-Please try to include:
-
-- the original prompt;
-- the detected category;
-- the expected behavior;
-- screenshots if relevant;
-- browser and operating system;
-- reproducible examples.
-
-## Philosophy
-
-The goal is to improve the quality of AI context preparation while keeping the project understandable and maintainable.
+Do not open a public issue. See [SECURITY.md](SECURITY.md).

@@ -1,288 +1,226 @@
 # ContextForge
 
-[English README](README.md)
+[English](README.md) · **Español**
 
-ContextForge es una herramienta web local-first que ayuda a preparar mejor el contexto antes de pedirle ayuda a una IA.
+[![CI](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml/badge.svg)](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml)
+[![Licencia: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![Idiomas: EN + ES](https://img.shields.io/badge/i18n-EN%20%2B%20ES-7da1ff)](#idiomas)
 
-En lugar de enviar un prompt vago directamente a un modelo, el usuario escribe una necesidad en lenguaje natural y ContextForge recomienda qué archivos, formatos, ejemplos, restricciones y materiales conviene compartir para obtener una mejor respuesta.
+> Decidí qué darle a una IA **antes** de preguntarle nada.
 
-El proyecto también funciona como ejemplo documentado de desarrollo asistido por IA: cambios pequeños, verificables, validados manualmente, con checkpoints en Git y documentación progresiva.
+ContextForge lee una necesidad escrita en lenguaje natural y te dice qué
+archivos, formatos, ejemplos y restricciones conviene compartir con una IA para
+obtener una respuesta usable. Funciona entero en tu navegador con reglas
+locales, y tiene un modo IA opcional que configurás vos.
 
-## Vista previa
+**▶️ [Demo en vivo](https://federicoramos67.github.io/Contextforge/)**
 
-> Se agregarán capturas o GIFs cuando la interfaz quede más estable.
+La demo pública corre en **modo reglas**, que no necesita ninguna API key. El
+modo IA opcional requiere tu propia key de proveedor, guardada en el
+`localStorage` de tu navegador y nunca enviada a ningún servidor de
+ContextForge.
 
-Por ahora, ContextForge corre localmente con Vite en:
+---
 
-```text
-http://localhost:5173/
-```
+## Contenido
 
-## Qué hace ContextForge
+- [El problema](#el-problema)
+- [Qué obtenés](#qué-obtenés)
+- [Idiomas](#idiomas)
+- [Puesta en marcha](#puesta-en-marcha)
+- [Cómo funciona](#cómo-funciona)
+- [Modo IA y API keys](#modo-ia-y-api-keys)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Contribuir](#contribuir)
+- [Limitaciones actuales](#limitaciones-actuales)
+- [Documentación](#documentación)
+- [Licencia](#licencia)
 
-Dado un prompt como:
+## El problema
 
-```text
-Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
-```
+Mucha gente sabe hacerle una pregunta a una IA. Menos gente sabe qué entregarle
+junto con la pregunta, y eso suele ser lo que define si la respuesta sirve.
 
-ContextForge devuelve:
+ContextForge no es otro asistente: es la capa anterior. Te ayuda a decidir si
+conviene compartir texto plano, código fuente, logs, capturas, JSON exportado,
+un CSV, un PDF, ejemplos estructurados o las restricciones que la respuesta
+tiene que respetar.
 
-- categoría detectada;
-- confianza de clasificación;
-- formatos principales recomendados;
-- contexto complementario útil;
-- qué evitar compartir;
-- explicación de por qué se detectó esa categoría;
-- keywords o señales detectadas;
-- puntaje de calidad del contexto;
-- checklist de material a preparar;
-- prompt refinado listo para copiar.
+## Qué obtenés
 
-## Estado actual
-
-Checkpoint actual: **v0.2**
-
-La app funciona localmente con React, Vite y reglas en JSON.
-
-No usa backend, base de datos, autenticación, API externa de IA ni procesamiento remoto. La lógica de clasificación corre localmente en el navegador.
-
-## Por qué importa este proyecto
-
-Muchas personas saben hacer preguntas a una IA, pero no siempre saben qué contexto conviene darle.
-
-ContextForge ayuda a decidir si conviene compartir:
-
-- texto plano;
-- código fuente;
-- logs;
-- capturas de pantalla;
-- JSON exportado;
-- archivos CSV o Excel;
-- PDFs;
-- ejemplos estructurados;
-- restricciones y salidas esperadas.
-
-El objetivo no es reemplazar a una IA. El objetivo es mejorar la entrada antes de usar una.
-
-## Funciones principales
-
-- Clasificación local de prompts basada en reglas.
-- Recomendaciones específicas por categoría.
-- Puntaje de calidad contextual.
-- Generación de checklist.
-- Generación de prompt refinado.
-- Exportación Markdown.
-- Explicación de por qué se detectó una categoría.
-- Visualización de keywords/señales detectadas.
-- Casos de QA manual documentados con un script Python auxiliar.
-- Flujo de desarrollo asistido por IA documentado.
-- CI con GitHub Actions para validar el build.
-- Estructura open source con guías de contribución, seguridad e issues.
-
-## Ejemplos
-
-### Automatización con n8n
-
-Entrada:
+Le das un prompt como:
 
 ```text
-Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
+Necesito corregir un workflow de n8n que falla cuando llega un webhook.
 ```
 
-Resultado esperado:
+y devuelve:
+
+| Salida                       | Qué es                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------- |
+| **Categoría**                | Una de 15 categorías, con una estimación de confianza                                 |
+| **Formato recomendado**      | El material principal a compartir, más complementos útiles                            |
+| **Qué evitar**               | Los errores que suelen costar una ida y vuelta                                        |
+| **Por qué**                  | Qué señales de tu texto dispararon esa categoría                                      |
+| **Puntaje de contexto**      | Una calificación de 0 a 100 con mejoras concretas                                     |
+| **Checklist**                | Qué juntar antes de preguntar                                                         |
+| **Auditoría de contexto**    | Huecos probables, el riesgo de cada uno y preguntas para cerrarlos                    |
+| **Prompt refinado**          | Un prompt reescrito, listo para copiar                                                |
+| **Autorrelleno de contexto** | Pegás material de referencia y extrae audiencia, tono, CTA, formato y restricciones   |
+| **Evaluador de respuestas**  | Pegás la respuesta de la IA y obtenés sus puntos débiles más un prompt de seguimiento |
+| **Exportación Markdown**     | Todo el reporte como archivo                                                          |
+
+Todo esto se genera localmente, con reglas, sin ninguna llamada de red.
+
+## Idiomas
+
+La interfaz, las reglas de contexto y todos los textos generados existen en
+**español e inglés**, intercambiables desde el header en cualquier momento. Al
+cambiar de idioma se vuelve a renderizar el análisis que ya está en pantalla,
+así la página nunca queda a medio traducir.
+
+Dos detalles que conviene conocer:
+
+- **El idioma de tu prompt es independiente del idioma de la interfaz.** Cada
+  categoría se puntúa contra la lista de keywords de cada idioma y gana el mejor
+  match, así un prompt en español clasifica bien con la interfaz en inglés, y al
+  revés.
+- **El idioma inicial** sale de tu elección guardada, después del idioma del
+  navegador, y si nada aplica queda en español.
+
+La documentación vive en el mismo repositorio en ambos idiomas: cada documento
+en inglés tiene su contraparte `.es.md`, enlazada desde una barra de idioma
+arriba de todo. En [docs/TRANSLATION.es.md](docs/TRANSLATION.es.md) está cómo se
+mantienen sincronizados y cómo agregar un tercer idioma.
+
+## Puesta en marcha
+
+Requiere Node.js 20.19 o superior (ver [`.nvmrc`](.nvmrc)).
+
+```bash
+git clone https://github.com/federicoramos67/Contextforge.git
+cd Contextforge
+npm install
+npm run dev
+```
+
+Después abrí la URL que muestra Vite, normalmente
+`http://localhost:5173/Contextforge/`.
+
+### Scripts
+
+| Comando            | Qué hace                                                  |
+| ------------------ | --------------------------------------------------------- |
+| `npm run dev`      | Servidor de desarrollo con recarga en caliente            |
+| `npm run build`    | Build de producción en `dist/`                            |
+| `npm run preview`  | Sirve el build de producción localmente                   |
+| `npm test`         | Corre la suite de tests                                   |
+| `npm run coverage` | Tests con reporte de cobertura                            |
+| `npm run lint`     | ESLint                                                    |
+| `npm run format`   | Formatea el repositorio con Prettier                      |
+| `npm run verify`   | Lint, chequeo de formato, tests y build — lo que corre CI |
+
+> [!WARNING]
+> Nunca hagas un build para deploy público con keys en `.env`. Vite embebe todas
+> las variables `VITE_*` dentro del bundle generado, así que cualquier key
+> presente al buildear queda legible en el JavaScript publicado. Buildeá **sin**
+> `.env`: el modo reglas no necesita ninguna key. Ver
+> [SECURITY.es.md](SECURITY.es.md).
+
+## Cómo funciona
 
 ```text
-Categoría: Automatización con n8n
-Confianza: 66%
-Keywords detectadas: n8n, workflow n8n, webhook n8n
+prompt ─▶ classifyPrompt ─▶ generateAdvice ──▶ recomendación
+              │                   │
+              │                   ├─▶ scoreContext ────▶ puntaje 0–100 + mejoras
+              │                   ├─▶ auditMissingContext ─▶ huecos, riesgos, preguntas
+              │                   └─▶ generateRefinedPrompt ─▶ prompt para copiar
+              │
+              └─(modo IA)─▶ classifyWithAI ─▶ cae a reglas locales si falla
+
+material de referencia ─▶ autofillContextFromReference ─▶ contexto inferido
+respuesta de la IA ────▶ evaluateAIResponse ───────────▶ puntos débiles + siguiente prompt
+todo ──────────────────▶ buildMarkdownReport ──────────▶ reporte exportable
 ```
 
-Contexto recomendado:
+Cada módulo de lógica es una función pura que recibe un `locale` opcional, y eso
+es lo que hace que todo el pipeline se pueda testear sin renderizar la app.
 
-- JSON exportado del workflow sin credenciales;
-- captura completa del workflow;
-- ejecución fallida o mensaje de error;
-- input de ejemplo;
-- output esperado;
-- nodo problemático;
-- servicios conectados.
+## Modo IA y API keys
 
-### Análisis de datos
+El modo reglas es el predeterminado y no necesita nada. El modo IA es opcional y
+soporta Ollama, Groq, Mistral, Gemini, Anthropic y OpenAI. Cuando un proveedor
+falla o supera el timeout (30s), la app cae a las reglas locales y te dice por
+qué.
 
-Entrada:
+Las keys ingresadas por la interfaz quedan en el `localStorage` de tu navegador.
+Las keys de `.env` se leen al buildear: leé la advertencia de más arriba antes de
+hacer deploy.
 
-```text
-Necesito que una IA analice un CSV de ventas y me proponga KPIs para un dashboard.
-```
-
-Resultado esperado:
-
-```text
-Categoría: Análisis de datos / métricas / datasets
-Keywords detectadas: kpi, dashboard
-```
-
-Contexto recomendado:
-
-- CSV, Excel o muestra SQL;
-- pregunta analítica;
-- definición de columnas;
-- diccionario de datos;
-- reglas de limpieza;
-- periodo analizado;
-- formato de salida esperado.
-
-## Stack técnico
-
-- React
-- Vite
-- JavaScript
-- CSS
-- Reglas JSON
-- Script Python auxiliar para QA
-- GitHub Actions
-- Git
+Copiá [`.env.example`](.env.example) a `.env` para uso local.
 
 ## Estructura del proyecto
 
 ```text
 contextforge/
-├─ .github/
-│  ├─ ISSUE_TEMPLATE/
-│  └─ workflows/
+├─ .github/            workflows, plantillas de issues y PR, dependabot
+├─ docs/               roadmap, flujo de trabajo y guía de traducción
+├─ public/             assets estáticos servidos tal cual
 ├─ src/
-│  ├─ components/
-│  ├─ data/
-│  ├─ logic/
-│  ├─ App.jsx
-│  ├─ main.jsx
-│  └─ style.css
-├─ docs/
-├─ tools/
-├─ CHANGELOG.md
-├─ CODE_OF_CONDUCT.md
-├─ CONTRIBUTING.md
-├─ LICENSE
-├─ SECURITY.md
-├─ SUPPORT.md
-├─ README.md
-└─ README.es.md
+│  ├─ components/      componentes React de presentación
+│  ├─ constants/       ejemplos, campos de proveedores, versión
+│  ├─ data/            contextRules.{es,en}.json + acceso por idioma
+│  ├─ hooks/           useAnalysis — orquestación y estado del análisis
+│  ├─ i18n/            diccionarios, traductor, detección de idioma, provider
+│  ├─ logic/           lógica de negocio pura, un módulo por paso
+│  ├─ App.jsx          layout y estado a nivel app
+│  └─ style.css        estilos
+├─ tests/              suites de Vitest para lógica, i18n y reglas
+└─ tools/              script Python que lista casos de QA manual
 ```
 
-## Cómo funciona
+## Contribuir
 
-1. El usuario escribe una necesidad en lenguaje natural.
-2. `classifyPrompt.js` compara el texto contra reglas locales.
-3. `scoreContext.js` evalúa la calidad del contexto.
-4. `generateAdvice.js` construye la recomendación.
-5. `ResultCard.jsx` muestra formatos, explicación, keywords y diagnóstico.
-6. `generateRefinedPrompt.js` crea un prompt mejorado para usar con otra IA.
-7. `exportMarkdown.js` puede generar un reporte exportable.
+Las contribuciones son bienvenidas, en español o en inglés. Leé primero
+[CONTRIBUTING.es.md](CONTRIBUTING.es.md) ([English](CONTRIBUTING.md)).
 
-## Ejecutar localmente
+Dos reglas propias de este proyecto:
 
-Instalar dependencias:
+1. Todo texto visible para el usuario va en **ambos** `src/i18n/locales/es.js` y
+   `en.js`. Un test falla si los diccionarios se desincronizan.
+2. Toda regla de contexto nueva va en **ambos** `contextRules.es.json` y
+   `contextRules.en.json`, con el mismo `id`. Otro test lo verifica.
 
-```bash
-npm install
-```
-
-Levantar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-Abrir la URL local que muestre Vite, normalmente:
-
-```text
-http://localhost:5173/
-```
-
-Crear build de producción:
-
-```bash
-npm run build
-```
-
-Vista previa del build:
-
-```bash
-npm run preview
-```
-
-## QA manual con Python
-
-ContextForge incluye un pequeño script Python para listar casos manuales de validación.
-
-Ejecutar desde la raíz del proyecto:
-
-```bash
-python tools/classifier_manual_cases.py
-```
-
-En Windows:
-
-```powershell
-py tools\classifier_manual_cases.py
-```
-
-Este script no se conecta a la app ni duplica la lógica del clasificador. Solo lista casos y resultados esperados para apoyar validaciones manuales y regresiones.
-
-## Flujo de desarrollo
-
-Este proyecto se construye con pasos pequeños y documentados:
-
-1. diagnosticar antes de modificar;
-2. aplicar el cambio mínimo seguro;
-3. ejecutar build o comando correspondiente;
-4. validar manualmente en navegador;
-5. documentar la decisión;
-6. crear un checkpoint en Git.
-
-Ese flujo es parte del valor del proyecto: demuestra cómo usar IA para desarrollar sin perder control, trazabilidad ni comprensión.
-
-## Documentación
-
-- [Roadmap](docs/ROADMAP.md)
-- [Flujo con Codex](docs/CODEX_WORKFLOW.md)
-- [Changelog](CHANGELOG.md)
-- [Guía de contribución](CONTRIBUTING.md)
-- [Política de seguridad](SECURITY.md)
-- [Soporte](SUPPORT.md)
+Corré `npm run verify` antes de abrir un pull request.
 
 ## Limitaciones actuales
 
-- La clasificación es heurística y basada en reglas.
-- La confianza es una aproximación, no una probabilidad estadística.
-- Algunas keywords pueden verse técnicas o repetitivas.
-- Todavía no hay tests unitarios automatizados.
-- No hay backend ni API externa de IA integrada.
-- Las reglas se editan manualmente en JSON.
+- La clasificación es heurística. La confianza es una estimación, no una
+  probabilidad.
+- Las reglas se editan a mano en JSON; no hay editor dentro de la app.
+- Las llamadas a proveedores desde el navegador dependen de la política CORS de
+  cada uno. Anthropic en particular se llama con el header
+  `anthropic-dangerous-direct-browser-access`, que envía tu key desde el
+  navegador y es **solo para uso local**.
+- El texto escrito por un proveedor de IA no se retraduce al cambiar de idioma;
+  se actualiza en el análisis siguiente.
+- No hay backend ni historial entre sesiones.
 
-## Roadmap
+## Documentación
 
-Mejoras posibles:
-
-- Mejorar visualmente las keywords detectadas.
-- Incluir explicación diagnóstica y keywords en exportaciones Markdown.
-- Agregar más casos de QA manual.
-- Agregar tests automatizados para la lógica de clasificación.
-- Mejorar pesos de categorías y manejo de falsos positivos.
-- Agregar historial local con `localStorage`.
-- Agregar modo principiante/profesional.
-- Agregar presets para ChatGPT, Claude, Gemini, Manus o Codex.
-- Agregar capturas y demo pública.
-
-## Filosofía
-
-ContextForge es una capa de preparación de contexto.
-
-Ayuda al usuario a pensar antes de pedirle algo a una IA, ordenar su solicitud y compartir el material correcto.
-
-Mejor contexto suele producir mejores respuestas.
+| Documento             | Español                                          | English                                    |
+| --------------------- | ------------------------------------------------ | ------------------------------------------ |
+| Roadmap               | [docs/ROADMAP.es.md](docs/ROADMAP.es.md)         | [docs/ROADMAP.md](docs/ROADMAP.md)         |
+| Guía de traducción    | [docs/TRANSLATION.es.md](docs/TRANSLATION.es.md) | [docs/TRANSLATION.md](docs/TRANSLATION.md) |
+| Flujo asistido por IA | [docs/AI_WORKFLOW.es.md](docs/AI_WORKFLOW.es.md) | [docs/AI_WORKFLOW.md](docs/AI_WORKFLOW.md) |
+| Changelog             | [CHANGELOG.md](CHANGELOG.md)                     | —                                          |
+| Contribuir            | [CONTRIBUTING.es.md](CONTRIBUTING.es.md)         | [CONTRIBUTING.md](CONTRIBUTING.md)         |
+| Política de seguridad | [SECURITY.es.md](SECURITY.es.md)                 | [SECURITY.md](SECURITY.md)                 |
+| Soporte               | [SUPPORT.es.md](SUPPORT.es.md)                   | [SUPPORT.md](SUPPORT.md)                   |
+| Código de conducta    | [CODE_OF_CONDUCT.es.md](CODE_OF_CONDUCT.es.md)   | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)   |
 
 ## Licencia
 
-Este proyecto está bajo licencia [MIT](LICENSE).
+[MIT](LICENSE).
