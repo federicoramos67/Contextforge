@@ -94,5 +94,3 @@ export function getActiveProvider() {
 
   return null;
 }
-
-export default CONFIG;

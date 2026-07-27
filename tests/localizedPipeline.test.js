@@ -66,13 +66,32 @@ describe('clasificación entre idiomas', () => {
     );
   });
 
-  it('da la misma confianza en ambos idiomas para prompts equivalentes', () => {
-    // El máximo teórico se calcula por variante, así que agregar un idioma no
-    // debe diluir la confianza del otro.
+  it('no diluye la confianza por existir el otro idioma', () => {
+    // El máximo teórico se calcula por variante y no sobre la suma de las
+    // keywords de todos los idiomas, así que un match fuerte sigue dando una
+    // confianza alta en ambos. Las listas de cada idioma no tienen el mismo
+    // largo, por eso se comparan contra un piso y no entre sí.
     const spanish = classifyPrompt(equivalentPrompts[0][1], 'es');
     const english = classifyPrompt(equivalentPrompts[0][2], 'en');
 
-    expect(spanish.confidence).toBe(english.confidence);
+    expect(spanish.confidence).toBeGreaterThan(35);
+    expect(english.confidence).toBeGreaterThan(35);
+    expect(Math.abs(spanish.confidence - english.confidence)).toBeLessThan(10);
+  });
+
+  it('muestra las señales detectadas en el idioma que el usuario está leyendo', () => {
+    // Las variantes de n8n puntúan igual en los dos idiomas ('workflow n8n' vs
+    // 'n8n workflow'), así que el desempate por idioma activo es lo único que
+    // evita mostrarle keywords en inglés a quien lee la interfaz en español.
+    const spanishPrompt =
+      'Quiero corregir un workflow de n8n que falla cuando llega un webhook.';
+
+    const spanish = classifyPrompt(spanishPrompt, 'es');
+    const english = classifyPrompt(spanishPrompt, 'en');
+
+    expect(spanish.id).toBe(english.id);
+    expect(spanish.matchedKeywords).toContain('workflow n8n');
+    expect(english.matchedKeywords).toContain('n8n workflow');
   });
 
   it('cae a general_context en ambos idiomas cuando no hay señales', () => {

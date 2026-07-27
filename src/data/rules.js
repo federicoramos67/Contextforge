@@ -33,16 +33,23 @@ export function getGeneralContextRule(locale = DEFAULT_LOCALE) {
 export const RULE_IDS = RULES_BY_LOCALE[DEFAULT_LOCALE].map((rule) => rule.id);
 
 /**
- * Devuelve, para un id de categoría, la variante de cada idioma disponible.
+ * Devuelve, para un id de categoría, la variante de cada idioma disponible,
+ * etiquetada con su `locale`.
+ *
  * El clasificador puntúa cada variante por separado en lugar de mezclar las
  * keywords de todos los idiomas en una sola bolsa: si se mezclaran, el máximo
  * teórico de la categoría crecería con cada idioma agregado y la confianza de
  * un prompt en español bajaría solo por existir la traducción al inglés.
+ *
+ * El `locale` de cada variante permite además desempatar: cuando dos idiomas
+ * puntúan igual, gana el del idioma activo, y las señales que se le muestran al
+ * usuario quedan en el idioma que está leyendo.
  */
 export function getRuleVariants(id) {
-  return Object.values(RULES_BY_LOCALE)
-    .map((rules) => rules.find((rule) => rule.id === id))
+  return Object.entries(RULES_BY_LOCALE)
+    .map(([locale, rules]) => {
+      const rule = rules.find((item) => item.id === id);
+      return rule ? { locale, rule } : null;
+    })
     .filter(Boolean);
 }
-
-export default RULES_BY_LOCALE;

@@ -98,12 +98,15 @@ describe('reglas de contexto', () => {
     expect(getGeneralContextRule('en').id).toBe(GENERAL_CONTEXT_ID);
   });
 
-  it('getRuleVariants devuelve una variante por idioma', () => {
+  it('getRuleVariants devuelve una variante por idioma, etiquetada con su locale', () => {
     const variants = getRuleVariants('programming_debug');
 
     expect(variants).toHaveLength(2);
-    expect(
-      variants.every((variant) => variant.id === 'programming_debug'),
-    ).toBe(true);
+    expect(variants.every(({ rule }) => rule.id === 'programming_debug')).toBe(
+      true,
+    );
+    // El locale es lo que le permite al clasificador desempatar a favor del
+    // idioma activo, así que tiene que venir en cada variante.
+    expect(variants.map(({ locale }) => locale).sort()).toEqual(['en', 'es']);
   });
 });

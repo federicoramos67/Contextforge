@@ -168,26 +168,43 @@ function getKeywordWeight(keyword, ruleId) {
 }
 
 // Puntúa una categoría contra el texto usando la lista de keywords de un idioma.
-function scoreVariant(normalized, variant) {
-  const matchedKeywords = variant.keywords.filter((keyword) => {
+function scoreVariant(normalized, { locale, rule }) {
+  const matchedKeywords = rule.keywords.filter((keyword) => {
     return (
       matchesKeyword(normalized, keyword) &&
-      !isSuppressedWebKeyword(variant.id, keyword, normalized)
+      !isSuppressedWebKeyword(rule.id, keyword, normalized)
     );
   });
 
   const score = matchedKeywords.reduce(
-    (total, keyword) => total + getKeywordWeight(keyword, variant.id),
+    (total, keyword) => total + getKeywordWeight(keyword, rule.id),
     0,
   );
 
   // Máximo teórico de esta variante, usado para normalizar la confianza.
-  const maxPossibleScore = variant.keywords.reduce(
-    (total, keyword) => total + getKeywordWeight(keyword, variant.id),
+  const maxPossibleScore = rule.keywords.reduce(
+    (total, keyword) => total + getKeywordWeight(keyword, rule.id),
     0,
   );
 
-  return { id: variant.id, score, maxPossibleScore, matchedKeywords };
+  return { id: rule.id, locale, score, maxPossibleScore, matchedKeywords };
+}
+
+/**
+ * Elige la mejor variante de una categoría.
+ *
+ * Ante un empate gana la del idioma activo. Sin este desempate, un prompt en
+ * español podía ganar por la variante en inglés (que puntúa igual, con las
+ * mismas keywords traducidas) y las señales detectadas se le mostraban al
+ * usuario en un idioma que no es el que está leyendo.
+ */
+function pickBestVariant(variants, locale) {
+  return variants.reduce((best, current) => {
+    if (current.score !== best.score)
+      return current.score > best.score ? current : best;
+    if (current.locale === locale) return current;
+    return best;
+  });
 }
 
 /**
@@ -212,11 +229,10 @@ export function classifyPrompt(text, locale = DEFAULT_LOCALE) {
 
   const scored = RULE_IDS.filter((id) => id !== GENERAL_CONTEXT_ID)
     .map((id) =>
-      getRuleVariants(id)
-        .map((variant) => scoreVariant(normalized, variant))
-        .reduce((best, current) =>
-          current.score > best.score ? current : best,
-        ),
+      pickBestVariant(
+        getRuleVariants(id).map((variant) => scoreVariant(normalized, variant)),
+        locale,
+      ),
     )
     .sort((a, b) => b.score - a.score);
 

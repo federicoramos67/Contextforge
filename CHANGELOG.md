@@ -61,12 +61,24 @@ bilingual.
   `Que respondio bien` → `Qué respondió bien`, and similar).
 - The completion level was shown twice, once translated and once as a raw enum
   id.
-- Removed the `promptTemplate` and `explanation` rule fields, which were unused
-  and present on only 5 of the 15 rules.
+- Detected signals were shown in the wrong language when both locales scored a
+  category equally. A Spanish prompt reported `n8n workflow` instead of
+  `workflow n8n`, because ties were broken by insertion order; the active
+  locale now wins a tie.
+- `package-lock.json` still declared version `0.5.1-alpha`.
+- `tools/classifier_manual_cases.py` expected outputs that the classifier no
+  longer produces, in two of its three cases.
+
+### Removed
+
+- The `promptTemplate` and `explanation` rule fields, unused and present on only
+  5 of the 15 rules.
+- Dead default exports in `src/config.js` and `src/data/rules.js`, and an
+  unnecessary `EXAMPLE_IDS` export.
 
 ### Tests
 
-- 64 → 117, adding dictionary parity, rule schema parity and cross-language
+- 64 → 118, adding dictionary parity, rule schema parity and cross-language
   classification suites.
 
 ## [0.5.1-alpha]
