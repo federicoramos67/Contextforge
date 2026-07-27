@@ -1,88 +1,105 @@
-# Roadmap de ContextForge
+# Roadmap
 
-## Fase 0 — Entorno
+**English** · [Español](ROADMAP.es.md)
 
-Objetivo: poder ejecutar el proyecto localmente.
+Where the product stands and where it is going. Shipped work is dated by
+version; planned work is an intention, not a commitment.
 
-- Instalar Node.js.
-- Instalar Git.
-- Instalar VS Code.
-- Instalar Codex CLI o extensión.
-- Ejecutar `npm install`.
-- Ejecutar `npm run dev`.
+## Shipped
 
-## Fase 1 — MVP local
+### v0.1 — Local MVP
 
-Objetivo: analizar un prompt y recomendar formato.
+Analyze a prompt and recommend a format, entirely in the browser.
 
-Incluido en v0.1:
+- Rule-based classification.
+- Context quality score.
+- Checklist generation.
+- Refined prompt.
+- Markdown export.
 
-- Textarea.
-- Botón de análisis.
-- Clasificación por reglas.
-- Scoring de calidad.
-- Checklist.
-- Prompt refinado.
-- Exportación Markdown.
+### v0.2 — Transparency and public project
 
-## Fase 2 — Mejoras de producto
+- Diagnostic explanation of the detected category.
+- Display of the detected signals.
+- Python helper listing manual QA cases.
+- GitHub Actions CI, MIT licence, issue templates and a contributing guide.
 
-Incluido en v0.3.0-alpha:
+### v0.3.0-alpha — Missing-context audit
 
-- Missing Context Auditor local.
-- Deteccion de contexto faltante a partir del checklist de la categoria.
-- Riesgos y preguntas de aclaracion antes de consultar a una IA.
-- Exportacion Markdown con la auditoria incluida.
+- Detection of missing context from the category checklist.
+- Concrete risks of leaving each item out.
+- Clarification questions to ask before going to an AI.
+- The audit is included in the Markdown export.
 
-- Historial local.
-- Modo principiante/profesional.
-- Selector de IA destino.
-- Ejemplos por categoría.
-- Vista comparativa de formatos.
+### v0.4.0-alpha — AI response evaluator
 
-## Fase 3 — Motor más inteligente
+Closes the first working loop: the AI's answer comes back into the app.
 
-Incluido en v0.4.0-alpha:
+- Evaluation of completeness, strengths, weak points and risks.
+- Generation of the next prompt to keep going.
+- The evaluated response is included in the export.
 
-- AI Response Evaluator local.
-- Next Prompt Generator para continuar el ciclo de trabajo.
-- Evaluacion de completitud, fortalezas, puntos debiles y riesgos.
-- Exportacion Markdown con respuesta evaluada y siguiente prompt.
+### v0.5.0-alpha — Autofill from reference material
 
-- Mejorar clasificación con pesos por palabras.
-- Detectar múltiples categorías.
-- Detectar ambigüedad.
-- Sugerir preguntas de aclaración.
-- Permitir editar reglas desde la app.
+- Local extraction of audience, tone, CTA, format and constraints from pasted
+  material.
+- An updated prompt carrying the inferred context.
+- Material and filled context are included in the export.
 
-## Fase 4 — Calidad y mantenimiento
+### v0.5.1-alpha — Working AI mode and tooling
 
-Incluido en v0.5.0-alpha:
+- Fixed the Anthropic, Groq and Gemini model ids, which pointed at models that
+  did not exist or had been decommissioned.
+- 30s per-provider timeout with fallback to local rules.
+- ESLint and Prettier, pinned dependencies, `npm ci` in CI.
 
-- Context Autofill from Reference Material.
-- Extraccion local de audiencia, tono, CTA, formato y restricciones.
-- Prompt actualizado con contexto inferido desde material pegado.
-- Exportacion Markdown con material de referencia y contexto rellenado.
+### v0.6.0-alpha — Bilingual
 
-- Agregar tests unitarios.
-- Agregar `npm run lint`.
-- Separar estilos por componentes.
-- Mejorar accesibilidad.
-- Preparar despliegue en Netlify o Vercel.
+- Interface, context rules and generated text in English and Spanish, with a
+  switcher in the header.
+- The prompt's language is independent of the interface language.
+- Documentation at parity in both languages.
+- Prettier applied across the repository and enforced in CI; ~90% coverage.
 
-## Fase 5 — IA opcional
+## Next
 
-Solo cuando la versión local sea sólida:
+Ordered by value against effort, not by date.
 
-- Integrar API de IA.
-- Comparar recomendación por reglas vs recomendación por IA.
-- Usar la IA solo para casos ambiguos.
-- Mantener modo gratuito/local.
+### Classification quality
 
-## Fase 6 — Producto avanzado
+- Detect multiple categories when a prompt mixes them.
+- Detect ambiguity and ask for clarification instead of forcing a category.
+- Revisit keyword weights against real false-positive cases.
+- Extend the manual QA cases.
 
-- Subida de archivos.
-- Análisis real de PDF, imagen o HTML.
-- Generación automática de paquetes de contexto.
-- Exportación para ChatGPT, Claude, Gemini, Manus o Codex.
-- Plantillas de prompts profesionales.
+### Product
+
+- Local history with `localStorage`.
+- Beginner / professional modes.
+- Target-AI selector with per-model presets.
+- Per-category examples and a format comparison view.
+- Screenshots and a UI GIF in the README.
+
+### Interface
+
+- Split styles per component.
+- Accessibility pass: focus, contrast, keyboard navigation, screen readers.
+- A real loading state during AI-mode calls.
+
+### Later
+
+- Editing rules from within the app.
+- File upload and real PDF, image or HTML analysis.
+- Automatic generation of context packages.
+- Professional prompt templates.
+
+## Out of scope
+
+Decisions already made, not open questions:
+
+- **No backend.** Analysis runs in the browser, which is what lets the public
+  demo work with no account and store nothing.
+- **No project-owned keys.** AI mode uses each user's own key, kept in their own
+  browser.
+- **No CSS framework.** Styles stay readable to someone who is just starting
+  out.

@@ -1,88 +1,255 @@
+import { DEFAULT_LOCALE, getTranslator } from '../i18n/index.js';
 import { normalizeText, unique } from './textUtils';
 
-const GENERAL_CHECKLIST = [
-  'Objetivo',
-  'Contexto',
-  'Material disponible',
-  'Que queres recibir',
-  'Limites o condiciones',
-];
-
-const GENERAL_RISKS = [
-  'La IA puede responder de forma generica si no entiende el objetivo concreto.',
-  'Puede inventar detalles o asumir restricciones que no fueron indicadas.',
-  'La respuesta puede requerir varias idas y vueltas para llegar a algo usable.',
-];
-
+// Señales que indican que un item del checklist ya está cubierto por el prompt.
+// `match` identifica de qué trata el item del checklist (que viene traducido,
+// por eso el patrón contempla ambos idiomas) y `signals` son las palabras que,
+// si aparecen en el prompt del usuario, dan ese item por cubierto.
 const itemSignals = [
   {
-    match: /codigo|archivo|bloque/,
-    signals: ['codigo', 'archivo', 'componente', 'funcion', 'script', 'repo', 'react', 'vite', 'node', 'python', 'javascript'],
+    match: /codigo|archivo|bloque|code|file|block|snippet/,
+    signals: [
+      'codigo',
+      'archivo',
+      'componente',
+      'funcion',
+      'script',
+      'repo',
+      'react',
+      'vite',
+      'node',
+      'python',
+      'javascript',
+      'code',
+      'file',
+      'function',
+      'component',
+    ],
   },
   {
-    match: /error|mensaje/,
-    signals: ['error', 'mensaje', 'stack', 'trace', 'log', 'terminal', 'exception', 'failed', 'falla'],
+    match: /error|mensaje|message/,
+    signals: [
+      'error',
+      'mensaje',
+      'stack',
+      'trace',
+      'log',
+      'terminal',
+      'exception',
+      'failed',
+      'falla',
+      'message',
+    ],
   },
   {
-    match: /esperabas|salida esperada|output esperado|resultado esperado/,
-    signals: ['espero', 'esperaba', 'deberia', 'salida esperada', 'output esperado', 'resultado esperado', 'quiero que devuelva'],
+    match:
+      /esperabas|salida esperada|output esperado|resultado esperado|expected|you expected/,
+    signals: [
+      'espero',
+      'esperaba',
+      'deberia',
+      'salida esperada',
+      'output esperado',
+      'resultado esperado',
+      'quiero que devuelva',
+      'expected',
+      'should return',
+    ],
   },
   {
-    match: /paso realmente|paso actual|que paso/,
-    signals: ['paso', 'ocurre', 'sucede', 'actualmente', 'en realidad', 'recibo', 'devuelve'],
+    match: /paso realmente|paso actual|que paso|actually happened|what happens/,
+    signals: [
+      'paso',
+      'ocurre',
+      'sucede',
+      'actualmente',
+      'en realidad',
+      'recibo',
+      'devuelve',
+      'happens',
+      'returns',
+      'currently',
+    ],
   },
   {
-    match: /comando/,
-    signals: ['npm', 'node', 'python', 'py ', 'pnpm', 'yarn', 'comando', 'terminal', 'powershell'],
+    match: /comando|command/,
+    signals: [
+      'npm',
+      'node',
+      'python',
+      'py ',
+      'pnpm',
+      'yarn',
+      'comando',
+      'terminal',
+      'powershell',
+      'command',
+    ],
   },
   {
-    match: /workflow|flujo/,
-    signals: ['workflow', 'flujo', 'json', 'export', 'exportado', 'n8n'],
+    match: /workflow|flujo|flow/,
+    signals: [
+      'workflow',
+      'flujo',
+      'json',
+      'export',
+      'exportado',
+      'n8n',
+      'exported',
+    ],
   },
   {
-    match: /nodo/,
-    signals: ['nodo', 'node problematico', 'http request', 'set node', 'code node', 'if node'],
+    match: /nodo|node/,
+    signals: [
+      'nodo',
+      'node problematico',
+      'http request',
+      'set node',
+      'code node',
+      'if node',
+      'node',
+    ],
   },
   {
     match: /input|entrada/,
-    signals: ['input', 'entrada', 'payload', 'webhook', 'datos de ejemplo', 'ejemplo de entrada'],
+    signals: [
+      'input',
+      'entrada',
+      'payload',
+      'webhook',
+      'datos de ejemplo',
+      'ejemplo de entrada',
+      'example input',
+    ],
   },
   {
-    match: /servicio|herramienta/,
-    signals: ['servicio', 'gmail', 'slack', 'sheets', 'api', 'webhook', 'zapier', 'make', 'n8n'],
+    match: /servicio|herramienta|service|tool/,
+    signals: [
+      'servicio',
+      'gmail',
+      'slack',
+      'sheets',
+      'api',
+      'webhook',
+      'zapier',
+      'make',
+      'n8n',
+      'service',
+      'tool',
+    ],
   },
   {
-    match: /frecuencia/,
-    signals: ['frecuencia', 'diario', 'cada', 'semanal', 'mensual', 'cuando llega', 'trigger'],
+    match: /frecuencia|frequency/,
+    signals: [
+      'frecuencia',
+      'diario',
+      'cada',
+      'semanal',
+      'mensual',
+      'cuando llega',
+      'trigger',
+      'daily',
+      'weekly',
+      'monthly',
+      'frequency',
+    ],
   },
   {
-    match: /restric|limite|condicion/,
-    signals: ['restriccion', 'limite', 'condicion', 'sin', 'solo', 'no puedo', 'privacidad', 'credenciales'],
+    match: /restric|limite|condicion|constraint|limit|condition/,
+    signals: [
+      'restriccion',
+      'limite',
+      'condicion',
+      'sin',
+      'solo',
+      'no puedo',
+      'privacidad',
+      'credenciales',
+      'constraint',
+      'limit',
+      'without',
+      'only',
+      'privacy',
+    ],
   },
   {
-    match: /objetivo|pregunta central/,
-    signals: ['quiero', 'necesito', 'busco', 'objetivo', 'ayuda', 'resolver', 'analizar', 'corregir'],
+    match: /objetivo|pregunta central|goal|core question/,
+    signals: [
+      'quiero',
+      'necesito',
+      'busco',
+      'objetivo',
+      'ayuda',
+      'resolver',
+      'analizar',
+      'corregir',
+      'want',
+      'need',
+      'goal',
+      'solve',
+      'fix',
+    ],
   },
   {
-    match: /contexto/,
-    signals: ['contexto', 'situacion', 'caso', 'actualmente', 'tengo', 'estoy trabajando'],
+    match: /contexto|context/,
+    signals: [
+      'contexto',
+      'situacion',
+      'caso',
+      'actualmente',
+      'tengo',
+      'estoy trabajando',
+      'context',
+      'currently',
+      'i have',
+    ],
   },
   {
-    match: /material disponible|documento|archivo de datos|captura|url/,
-    signals: ['tengo', 'adjunto', 'archivo', 'captura', 'pdf', 'csv', 'excel', 'url', 'link', 'codigo'],
+    match:
+      /material disponible|documento|archivo de datos|captura|url|available material|screenshot|data file/,
+    signals: [
+      'tengo',
+      'adjunto',
+      'archivo',
+      'captura',
+      'pdf',
+      'csv',
+      'excel',
+      'url',
+      'link',
+      'codigo',
+      'attached',
+      'screenshot',
+      'file',
+    ],
   },
   {
-    match: /formato de salida|que queres recibir|tipo de entrega/,
-    signals: ['formato', 'tabla', 'lista', 'paso a paso', 'checklist', 'resumen', 'diagnostico', 'codigo corregido'],
+    match:
+      /formato de salida|que queres recibir|tipo de entrega|output format|you want to receive|deliverable/,
+    signals: [
+      'formato',
+      'tabla',
+      'lista',
+      'paso a paso',
+      'checklist',
+      'resumen',
+      'diagnostico',
+      'codigo corregido',
+      'format',
+      'table',
+      'list',
+      'step by step',
+      'summary',
+    ],
   },
 ];
 
-function getChecklist(category) {
+function getChecklist(category, t) {
   if (Array.isArray(category?.checklist) && category.checklist.length) {
     return category.checklist.filter(Boolean);
   }
 
-  return GENERAL_CHECKLIST;
+  return t('auditLogic.generalChecklist');
 }
 
 function getSignalsForItem(item) {
@@ -105,103 +272,121 @@ function hasItemContext(normalizedText, item) {
   });
 }
 
-function buildRiskWarning(item, categoryLabel, categoryId) {
+function buildRiskWarning(item, categoryLabel, categoryId, t) {
   const normalizedItem = normalizeText(item);
 
-  if (categoryId === 'n8n_automation' && /workflow|nodo|input|output|error/.test(normalizedItem)) {
-    return 'En n8n, sin workflow, nodo, datos y error exacto, es facil proponer cambios en el lugar equivocado.';
+  if (
+    categoryId === 'n8n_automation' &&
+    /workflow|nodo|node|input|output|error/.test(normalizedItem)
+  ) {
+    return t('auditLogic.risks.n8n');
   }
 
-  if (categoryId === 'programming_debug' && /codigo|error|comando/.test(normalizedItem)) {
-    return 'En programacion, sin codigo, error y comando, la IA puede confundir sintomas con causa raiz.';
+  if (
+    categoryId === 'programming_debug' &&
+    /codigo|code|error|comando|command/.test(normalizedItem)
+  ) {
+    return t('auditLogic.risks.programming');
   }
 
-  if (/error|mensaje/.test(normalizedItem)) {
-    return 'Sin el error completo, la IA puede diagnosticar una causa equivocada.';
+  if (/error|mensaje|message/.test(normalizedItem)) {
+    return t('auditLogic.risks.error');
   }
 
   if (/input|entrada|output|salida/.test(normalizedItem)) {
-    return 'Sin ejemplos de entrada y salida, es facil proponer una solucion que no encaje con los datos reales.';
+    return t('auditLogic.risks.io');
   }
 
-  if (/codigo|archivo|workflow|flujo|nodo/.test(normalizedItem)) {
-    return `Sin ${item.toLowerCase()}, la respuesta para ${categoryLabel} puede quedarse en recomendaciones demasiado generales.`;
+  if (
+    /codigo|code|archivo|file|workflow|flujo|flow|nodo|node/.test(
+      normalizedItem,
+    )
+  ) {
+    return t('auditLogic.risks.material', {
+      item: item.toLowerCase(),
+      category: categoryLabel,
+    });
   }
 
-  if (/restric|limite|condicion|credencial/.test(normalizedItem)) {
-    return 'Sin restricciones claras, la IA puede sugerir pasos inviables o inseguros.';
+  if (
+    /restric|limite|condicion|credencial|constraint|limit|condition|credential/.test(
+      normalizedItem,
+    )
+  ) {
+    return t('auditLogic.risks.constraints');
   }
 
-  if (/objetivo|esperabas|resultado|formato/.test(normalizedItem)) {
-    return 'Sin definir el resultado esperado, la IA puede optimizar para una meta distinta a la tuya.';
+  if (
+    /objetivo|esperabas|resultado|formato|goal|expected|result|format/.test(
+      normalizedItem,
+    )
+  ) {
+    return t('auditLogic.risks.objective');
   }
 
-  return `Falta ${item.toLowerCase()}, asi que la IA podria asumirlo en lugar de pedirlo.`;
+  return t('auditLogic.risks.generic', { item: item.toLowerCase() });
 }
 
-function buildQuestion(item) {
+function buildQuestion(item, t) {
   const normalizedItem = normalizeText(item);
 
-  if (/error|mensaje/.test(normalizedItem)) {
-    return 'Cual es el mensaje de error completo y en que momento aparece?';
+  if (/error|mensaje|message/.test(normalizedItem))
+    return t('auditLogic.questions.error');
+  if (/codigo|code|archivo|file|bloque|block/.test(normalizedItem))
+    return t('auditLogic.questions.code');
+  if (/workflow|flujo|flow/.test(normalizedItem))
+    return t('auditLogic.questions.workflow');
+  if (/nodo|node/.test(normalizedItem)) return t('auditLogic.questions.node');
+  if (/input|entrada/.test(normalizedItem))
+    return t('auditLogic.questions.input');
+  if (/output|salida|resultado|result/.test(normalizedItem))
+    return t('auditLogic.questions.output');
+  if (
+    /restric|limite|condicion|constraint|limit|condition/.test(normalizedItem)
+  ) {
+    return t('auditLogic.questions.constraints');
   }
-
-  if (/codigo|archivo|bloque/.test(normalizedItem)) {
-    return 'Que archivo, bloque de codigo o fragmento exacto deberia revisar la IA?';
+  if (
+    /formato|que queres recibir|tipo de entrega|format|you want to receive|deliverable/.test(
+      normalizedItem,
+    )
+  ) {
+    return t('auditLogic.questions.format');
   }
+  if (/objetivo|goal/.test(normalizedItem))
+    return t('auditLogic.questions.objective');
 
-  if (/workflow|flujo/.test(normalizedItem)) {
-    return 'Podes compartir el workflow exportado sin credenciales o describir sus pasos principales?';
-  }
-
-  if (/nodo/.test(normalizedItem)) {
-    return 'Que nodo falla o concentra el comportamiento que queres corregir?';
-  }
-
-  if (/input|entrada/.test(normalizedItem)) {
-    return 'Cual es un ejemplo realista de entrada que recibe el sistema?';
-  }
-
-  if (/output|salida|resultado/.test(normalizedItem)) {
-    return 'Que salida esperabas recibir y que salida estas obteniendo ahora?';
-  }
-
-  if (/restric|limite|condicion/.test(normalizedItem)) {
-    return 'Que restricciones, herramientas o condiciones debe respetar la respuesta?';
-  }
-
-  if (/formato|que queres recibir|tipo de entrega/.test(normalizedItem)) {
-    return 'En que formato queres recibir la respuesta final?';
-  }
-
-  if (/objetivo/.test(normalizedItem)) {
-    return 'Cual es el objetivo concreto que queres lograr con la IA?';
-  }
-
-  return `Que informacion podes agregar sobre "${item}"?`;
+  return t('auditLogic.questions.generic', { item });
 }
 
-export function auditMissingContext(userText, category = {}) {
+export function auditMissingContext(
+  userText,
+  category = {},
+  locale = DEFAULT_LOCALE,
+) {
+  const t = getTranslator(locale);
   const normalizedText = normalizeText(userText);
-  const categoryLabel = category?.label || 'esta consulta';
+  const categoryLabel = category?.label || t('auditLogic.thisQuery');
   const categoryId = category?.id || 'general_context';
-  const checklist = getChecklist(category);
+  const checklist = getChecklist(category, t);
 
-  const missingItems = checklist.filter((item) => !hasItemContext(normalizedText, item));
+  const missingItems = checklist.filter(
+    (item) => !hasItemContext(normalizedText, item),
+  );
   const selectedMissingItems = missingItems.length
     ? missingItems.slice(0, 5)
-    : [
-        'Ejemplo concreto o caso real',
-        'Restricciones o limites importantes',
-        'Formato exacto de salida',
-      ];
+    : t('auditLogic.fallbackMissingItems');
 
   const riskWarnings = unique(
-    (missingItems.length ? selectedMissingItems.map((item) => buildRiskWarning(item, categoryLabel, categoryId)) : GENERAL_RISKS)
+    missingItems.length
+      ? selectedMissingItems.map((item) =>
+          buildRiskWarning(item, categoryLabel, categoryId, t),
+        )
+      : t('auditLogic.generalRisks'),
   ).slice(0, 4);
 
   const clarificationQuestions = unique(
-    selectedMissingItems.map((item) => buildQuestion(item))
+    selectedMissingItems.map((item) => buildQuestion(item, t)),
   ).slice(0, 5);
 
   return {

@@ -1,8 +1,32 @@
 {
   "name": "contextforge",
-  "version": "0.5.1-alpha",
+  "version": "0.6.0-alpha",
   "private": true,
   "type": "module",
+  "description": "Local-first, bilingual (EN/ES) context engineering tool that recommends which files, formats and constraints to share with an AI before prompting it.",
+  "keywords": [
+    "ai",
+    "prompt-engineering",
+    "context-engineering",
+    "local-first",
+    "react",
+    "vite",
+    "i18n",
+    "bilingual"
+  ],
+  "homepage": "https://federicoramos67.github.io/Contextforge/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/federicoramos67/Contextforge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/federicoramos67/Contextforge/issues"
+  },
+  "license": "MIT",
+  "author": "Federico Ramos (https://github.com/federicoramos67)",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
@@ -11,7 +35,8 @@
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "verify": "npm run lint && npm run format:check && npm test && npm run build"
   },
   "dependencies": {
     "react": "^19.2.6",

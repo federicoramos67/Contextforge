@@ -4,7 +4,7 @@ import { scoreContext } from '../src/logic/scoreContext';
 describe('scoreContext', () => {
   it('gives a perfect score when the text hits every check', () => {
     const result = scoreContext(
-      'Quiero resolver un problema: tengo un PDF y necesito un resultado en tabla, sin usar internet.'
+      'Quiero resolver un problema: tengo un PDF y necesito un resultado en tabla, sin usar internet.',
     );
 
     expect(result.score).toBe(100);

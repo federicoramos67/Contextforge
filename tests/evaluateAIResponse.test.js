@@ -15,7 +15,10 @@ const category = {
 
 const advice = {
   checklist: category.checklist,
-  primaryFormats: ['Codigo fuente copiado como texto o archivos del proyecto', 'Logs completos de error'],
+  primaryFormats: [
+    'Codigo fuente copiado como texto o archivos del proyecto',
+    'Logs completos de error',
+  ],
   secondaryFormats: ['Comando exacto ejecutado'],
 };
 
@@ -35,7 +38,8 @@ describe('evaluateAIResponse', () => {
   it('flags vague responses with risks', () => {
     const result = evaluateAIResponse({
       userText: 'Necesito corregir un bug en React.',
-      aiResponse: 'Depende del caso. En general podria ser un problema de configuracion o de codigo.',
+      aiResponse:
+        'Depende del caso. En general podria ser un problema de configuracion o de codigo.',
       category,
       advice,
     });

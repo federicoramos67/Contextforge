@@ -4,16 +4,17 @@ on:
   push:
     branches:
       - main
-  # Permite lanzar el deploy manualmente desde la pestaña Actions
+  # Allows triggering the deploy manually from the Actions tab.
   workflow_dispatch:
 
-# Permisos mínimos para publicar en Pages con OIDC (id-token)
+# Minimum permissions to publish to Pages with OIDC (id-token).
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Un solo deploy a la vez; no cancela uno en curso para no dejar Pages a medias
+# One deploy at a time; a running deploy is never cancelled so Pages is not
+# left half-published.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -28,17 +29,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      # SEGURIDAD: build limpio, sin .env ni variables VITE_*_KEY.
-      # Vite embebe las VITE_* en el bundle público, así que la demo se
-      # buildea sin ninguna key. El sitio corre en modo reglas locales;
-      # cada usuario pone su propia key en el navegador (localStorage).
-      - name: Build (sin keys de API)
+      # SECURITY: clean build, with no .env and no VITE_*_KEY variables.
+      # Vite inlines every VITE_* value into the public bundle, so the demo is
+      # built without any key. The site runs in local rules mode; each user
+      # supplies their own key in their own browser (localStorage).
+      - name: Build (no API keys)
         run: npm run build
 
       - name: Setup Pages

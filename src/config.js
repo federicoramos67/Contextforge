@@ -60,12 +60,11 @@ const PRIORITY = ['ollama', 'groq', 'mistral', 'gemini', 'anthropic', 'openai'];
 // Devuelve los proveedores que tienen key disponible (localStorage o .env), en orden de prioridad
 export function getAvailableProviders() {
   const stored = getStoredKeys();
-  return PRIORITY
-    .filter(id => {
-      if (id === 'ollama') return !!(stored.ollama || import.meta.env.VITE_OLLAMA_URL);
-      return !!(stored[id] || CONFIG[id].key);
-    })
-    .map(id => ({ id, name: CONFIG[id].name }));
+  return PRIORITY.filter((id) => {
+    if (id === 'ollama')
+      return !!(stored.ollama || import.meta.env.VITE_OLLAMA_URL);
+    return !!(stored[id] || CONFIG[id].key);
+  }).map((id) => ({ id, name: CONFIG[id].name }));
 }
 
 // Devuelve el primer proveedor activo con su key/URL efectiva resuelta.
@@ -75,9 +74,10 @@ export function getActiveProvider() {
   const stored = getStoredKeys();
   const selectedId = localStorage.getItem(ACTIVE_PROVIDER_KEY);
 
-  const order = (selectedId && selectedId !== 'auto')
-    ? [selectedId, ...PRIORITY.filter(id => id !== selectedId)]
-    : PRIORITY;
+  const order =
+    selectedId && selectedId !== 'auto'
+      ? [selectedId, ...PRIORITY.filter((id) => id !== selectedId)]
+      : PRIORITY;
 
   for (const id of order) {
     const p = CONFIG[id];
@@ -94,5 +94,3 @@ export function getActiveProvider() {
 
   return null;
 }
-
-export default CONFIG;

@@ -29,9 +29,12 @@ describe('classifyPrompt - automatización y desambiguación de `web`', () => {
     ],
   ];
 
-  test.each(automationCases)('clasifica como automation -> %s', (_label, prompt) => {
-    expect(classifyPrompt(prompt).id).toBe('automation');
-  });
+  test.each(automationCases)(
+    'clasifica como automation -> %s',
+    (_label, prompt) => {
+      expect(classifyPrompt(prompt).id).toBe('automation');
+    },
+  );
 
   it('no clasifica el prompt del bug como diseño visual', () => {
     expect(classifyPrompt(BUG_PROMPT).id).not.toBe('visual_ui');
@@ -62,13 +65,18 @@ describe('classifyPrompt - automatización y desambiguación de `web`', () => {
     ],
   ];
 
-  test.each(otherCategoryCases)('mantiene la categoría %s', (expectedId, prompt) => {
-    expect(classifyPrompt(prompt).id).toBe(expectedId);
-  });
+  test.each(otherCategoryCases)(
+    'mantiene la categoría %s',
+    (expectedId, prompt) => {
+      expect(classifyPrompt(prompt).id).toBe(expectedId);
+    },
+  );
 
   it('`web` sigue contando cuando no hay señales de automatización', () => {
     // Prompt puramente visual: la supresión de `web` NO debe dispararse.
-    const result = classifyPrompt('Revisá el diseño visual de mi web y los colores del hero.');
+    const result = classifyPrompt(
+      'Revisá el diseño visual de mi web y los colores del hero.',
+    );
     expect(result.id).toBe('visual_ui');
     expect(result.matchedKeywords).toContain('web');
   });
@@ -76,7 +84,9 @@ describe('classifyPrompt - automatización y desambiguación de `web`', () => {
   it('un formulario que se rediseña sigue siendo diseño visual', () => {
     // `formulario` es ambiguo (se diseña tanto como se automatiza) y no está entre
     // las señales que suprimen `web`, así que este prompt visual no debe migrar.
-    const result = classifyPrompt('Quiero rediseñar el formulario de contacto de mi web, se ve feo.');
+    const result = classifyPrompt(
+      'Quiero rediseñar el formulario de contacto de mi web, se ve feo.',
+    );
     expect(result.id).toBe('visual_ui');
   });
 });

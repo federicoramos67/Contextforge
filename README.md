@@ -1,369 +1,220 @@
 # ContextForge
 
-[![ContextForge CI](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml/badge.svg)](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml)
+**English** · [Español](README.es.md)
+
+[![CI](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml/badge.svg)](https://github.com/federicoramos67/Contextforge/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Made with React](https://img.shields.io/badge/React-local--first-61DAFB?logo=react)](https://react.dev/)
-[![Built with Vite](https://img.shields.io/badge/Vite-fast--dev-646CFF?logo=vite)](https://vitejs.dev/)
-[![AI-assisted workflow](https://img.shields.io/badge/Workflow-AI--assisted-blueviolet)](docs/CODEX_WORKFLOW.md)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
+[![Languages: EN + ES](https://img.shields.io/badge/i18n-EN%20%2B%20ES-7da1ff)](#language-support)
 
-**AI-assisted context engineering tool that helps users prepare better prompts, files, and workflows before using AI.**
+> Decide what to give an AI **before** you ask it anything.
 
-ContextForge is a hybrid context advisor: it works with local rules by default and can optionally use configured AI providers to classify a user's need and recommend the best context to share.
+ContextForge reads a need written in plain language and tells you which files,
+formats, examples and constraints are worth sharing with an AI to get a usable
+answer. It runs entirely in your browser on local rules, with an optional AI
+mode you configure yourself.
 
-Instead of sending a vague prompt directly to an AI model, the user writes a natural-language need and ContextForge recommends what files, formats, examples, constraints, and supporting material should be shared to obtain a better answer.
+**▶️ [Live demo](https://federicoramos67.github.io/Contextforge/)**
 
-The project is also a documented example of building software with AI assistance using small, verifiable steps, manual validation, Git checkpoints and progressive documentation.
+The public demo runs in **rules mode**, which needs no API key. The optional AI
+mode requires your own provider key, stored in your browser's `localStorage`
+and never sent to any ContextForge server.
 
-## Live demo
+---
 
-**▶️ [Demo en vivo](https://federicoramos67.github.io/Contextforge/)** — `https://federicoramos67.github.io/Contextforge/`
+## Contents
 
-The public demo runs in **rules mode (no API key required)**: it classifies your
-need and recommends context using local heuristics only. The optional **AI mode**
-requires each user to provide their own provider API key, which is stored locally
-in the browser (`localStorage`) and never sent to any ContextForge server.
+- [The problem](#the-problem)
+- [What you get](#what-you-get)
+- [Language support](#language-support)
+- [Quick start](#quick-start)
+- [How it works](#how-it-works)
+- [AI mode and API keys](#ai-mode-and-api-keys)
+- [Project structure](#project-structure)
+- [Contributing](#contributing)
+- [Current limitations](#current-limitations)
+- [Documentation](#documentation)
+- [License](#license)
 
-## Preview
+## The problem
 
-> Demo screenshots/GIFs will be added as the UI stabilizes.
+Most people know how to ask an AI a question. Fewer know what to hand it along
+with the question — and that is usually what decides whether the answer is
+useful.
 
-You can also run ContextForge locally with Vite at:
+ContextForge is not another assistant. It is the layer before one: it helps you
+work out whether to share plain text, source code, logs, screenshots, exported
+JSON, a CSV, a PDF, structured examples, or the constraints the answer has to
+respect.
 
-```text
-http://localhost:5173/
-```
+## What you get
 
-## What ContextForge does
-
-Given a prompt such as:
-
-```text
-Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
-```
-
-ContextForge returns:
-
-- detected category;
-- classification confidence;
-- recommended primary formats;
-- useful complementary context;
-- what to avoid sharing;
-- explanation of why the category was detected;
-- detected keywords/signals;
-- context quality score;
-- checklist of material to prepare;
-- refined prompt ready to copy;
-- context autofill from pasted reference material;
-- AI response evaluation and next prompt generation.
-
-## Current status
-
-Current checkpoint: **v0.5.0-alpha**
-
-The app currently works locally with React, Vite and JSON-based rules, with an optional AI mode for configured providers.
-
-The default experience remains local-first and rule-based. AI providers are optional and should be configured deliberately by the user.
-
-### ContextForge v0.3.0-alpha — Missing Context Auditor
-
-This alpha adds a local Missing Context Auditor. After classifying a prompt, ContextForge now highlights likely missing context, explains the risks of asking an AI without it, and suggests practical clarification questions before exporting or copying the refined prompt.
-
-### ContextForge v0.4.0-alpha — AI Response Evaluator
-
-This alpha closes the first local feedback loop: after using the refined prompt in an external AI, users can paste the AI response back into ContextForge. The app evaluates completion, weak points, risks and generates a next prompt locally with rules.
-
-### ContextForge v0.5.0-alpha — Context Autofill
-
-This alpha adds local Context Autofill from pasted reference material. Users can paste a prior campaign, brief, email, client text or base documentation, and ContextForge extracts useful signals, fills some missing context and generates an updated prompt.
-
-## Why this project matters
-
-Many people know how to ask an AI a question, but they do not always know what context to provide.
-
-ContextForge helps users decide whether they should share:
-
-- plain text;
-- source code;
-- logs;
-- screenshots;
-- exported JSON;
-- CSV or Excel files;
-- PDFs;
-- structured examples;
-- constraints and expected outputs.
-
-The goal is not to replace an AI assistant. The goal is to improve the input before using one.
-
-## Key features
-
-- Local rule-based prompt classification.
-- Optional AI provider mode.
-- Automatic fallback to local rules.
-- Category-specific recommendations.
-- Context quality scoring.
-- Checklist generation.
-- Missing Context Auditor with local, rule-based fallback.
-- Context Autofill from pasted reference material.
-- AI Response Evaluator and Next Prompt Generator.
-- Refined prompt generation.
-- Markdown export support.
-- Explanation of why a category was detected.
-- Display of detected keywords/signals.
-- Manual QA cases documented with a Python helper script.
-- Documented AI-assisted development workflow.
-- CI workflow that validates production builds and tests.
-- Open-source project structure with contribution, security and issue templates.
-
-## Example outputs
-
-### n8n automation
-
-Input:
+Give it a prompt such as:
 
 ```text
-Quiero que una IA me ayude a corregir un workflow de n8n que falla cuando recibe datos de un webhook.
+I need to fix an n8n workflow that fails when a webhook arrives.
 ```
 
-Expected result:
+and you get back:
+
+| Output                    | What it is                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| **Category**              | One of 15 categories, with a confidence estimate                                     |
+| **Recommended format**    | The primary material to share, plus useful extras                                    |
+| **What to avoid**         | The mistakes that typically waste a round trip                                       |
+| **Why**                   | Which signals in your text triggered the category                                    |
+| **Context score**         | A 0–100 rating of your prompt with concrete improvements                             |
+| **Checklist**             | What to gather before you ask                                                        |
+| **Missing-context audit** | Likely gaps, the risk of each, and questions to close them                           |
+| **Refined prompt**        | A rewritten prompt, ready to copy                                                    |
+| **Context autofill**      | Paste reference material and it extracts audience, tone, CTA, format and constraints |
+| **Response evaluator**    | Paste the AI's answer back and get its weak points plus a follow-up prompt           |
+| **Markdown export**       | The whole report as a file                                                           |
+
+Every one of these is produced locally, by rules, with no network call.
+
+## Language support
+
+The interface, the context rules and every generated text exist in **English
+and Spanish**, switchable from the header at any time. Switching re-renders an
+analysis already on screen, so the page never ends up half-translated.
+
+Two details worth knowing:
+
+- **Your prompt's language is independent of the interface language.** Each
+  category is scored against every language's keyword list and the best match
+  wins, so a Spanish prompt classifies correctly with the English UI, and the
+  other way round.
+- **The initial language** comes from your stored choice, then your browser's
+  language, then Spanish as the fallback.
+
+Documentation lives in the same repository in both languages: every English
+document has a `.es.md` counterpart, linked from a language bar at the top.
+See [docs/TRANSLATION.md](docs/TRANSLATION.md) for how the two are kept in sync
+and how to add a third language.
+
+## Quick start
+
+Requires Node.js 20.19 or newer (see [`.nvmrc`](.nvmrc)).
+
+```bash
+git clone https://github.com/federicoramos67/Contextforge.git
+cd Contextforge
+npm install
+npm run dev
+```
+
+Then open the URL Vite prints, usually `http://localhost:5173/Contextforge/`.
+
+### Scripts
+
+| Command            | What it does                                       |
+| ------------------ | -------------------------------------------------- |
+| `npm run dev`      | Development server with hot reload                 |
+| `npm run build`    | Production build into `dist/`                      |
+| `npm run preview`  | Serve the production build locally                 |
+| `npm test`         | Run the test suite                                 |
+| `npm run coverage` | Tests with a coverage report                       |
+| `npm run lint`     | ESLint                                             |
+| `npm run format`   | Format the repository with Prettier                |
+| `npm run verify`   | Lint, format check, tests and build — what CI runs |
+
+> [!WARNING]
+> Never build for a public deployment with keys in `.env`. Vite inlines every
+> `VITE_*` variable into the generated bundle, so any key present at build time
+> ends up readable in the published JavaScript. Build **without** a `.env`: the
+> rules mode needs no keys. See [SECURITY.md](SECURITY.md).
+
+## How it works
 
 ```text
-Category: Automatización con n8n
-Confidence: 66%
-Detected keywords: n8n, workflow n8n, webhook n8n
+prompt ─▶ classifyPrompt ─▶ generateAdvice ──▶ recommendation
+              │                   │
+              │                   ├─▶ scoreContext ────▶ 0–100 score + fixes
+              │                   ├─▶ auditMissingContext ─▶ gaps, risks, questions
+              │                   └─▶ generateRefinedPrompt ─▶ prompt to copy
+              │
+              └─(AI mode)─▶ classifyWithAI ─▶ falls back to local rules on failure
+
+reference material ─▶ autofillContextFromReference ─▶ inferred context
+AI's answer ───────▶ evaluateAIResponse ───────────▶ weak points + next prompt
+everything ────────▶ buildMarkdownReport ──────────▶ exportable report
 ```
 
-Recommended context:
+Each logic module is a pure function taking an optional `locale`, which is what
+makes the whole pipeline testable without rendering the app.
 
-- exported workflow JSON without credentials;
-- full workflow screenshot;
-- failed execution or error message;
-- example input;
-- expected output;
-- problematic node;
-- connected services.
+## AI mode and API keys
 
-### Data analysis
+Rules mode is the default and needs nothing. AI mode is opt-in and supports
+Ollama, Groq, Mistral, Gemini, Anthropic and OpenAI. When a provider fails or
+times out (30s), the app falls back to local rules and tells you why.
 
-Input:
+Keys entered through the UI are kept in your browser's `localStorage`. Keys in
+`.env` are read at build time — read the warning above before deploying.
 
-```text
-Necesito que una IA analice un CSV de ventas y me proponga KPIs para un dashboard.
-```
-
-Expected result:
-
-```text
-Category: Análisis de datos / métricas / datasets
-Detected keywords: kpi, dashboard
-```
-
-Recommended context:
-
-- CSV, Excel or SQL sample;
-- analytical question;
-- column definitions;
-- data dictionary;
-- cleaning rules;
-- period analyzed;
-- expected output format.
-
-## Tech stack
-
-- React
-- Vite
-- JavaScript
-- CSS
-- JSON rules
-- Python auxiliary QA script
-- GitHub Actions
-- Git
+Copy [`.env.example`](.env.example) to `.env` for local use.
 
 ## Project structure
 
 ```text
 contextforge/
-|- .github/
-|  |- ISSUE_TEMPLATE/
-|  `- workflows/
-|- src/
-|  |- components/
-|  |  |- AIResponseEvaluator.jsx
-|  |  |- Checklist.jsx
-|  |  |- ContextAutofill.jsx
-|  |  |- MissingContextAudit.jsx
-|  |  |- PromptInput.jsx
-|  |  |- PromptSuggestion.jsx
-|  |  |- ResultCard.jsx
-|  |  `- ScorePanel.jsx
-|  |- data/
-|  |  `- contextRules.json
-|  |- logic/
-|  |  |- auditMissingContext.js
-|  |  |- autofillContextFromReference.js
-|  |  |- classifyPrompt.js
-|  |  |- classifyWithAI.js
-|  |  |- evaluateAIResponse.js
-|  |  |- exportMarkdown.js
-|  |  |- generateAdvice.js
-|  |  |- generateRefinedPrompt.js
-|  |  |- scoreContext.js
-|  |  `- textUtils.js
-|  |- App.jsx
-|  |- config.js
-|  |- main.jsx
-|  `- style.css
-|- docs/
-|  |- CODEX_WORKFLOW.md
-|  `- ROADMAP.md
-|- tools/
-|  `- classifier_manual_cases.py
-|- tests/
-|  |- auditMissingContext.test.js
-|  |- autofillContextFromReference.test.js
-|  |- classifyPrompt.test.js
-|  `- evaluateAIResponse.test.js
-|- CHANGELOG.md
-|- CODE_OF_CONDUCT.md
-|- CONTRIBUTING.md
-|- LICENSE
-|- SECURITY.md
-|- SUPPORT.md
-|- package.json
-|- package-lock.json
-|- index.html
-|- vite.config.js
-`- README.md
+├─ .github/            workflows, issue and PR templates, dependabot
+├─ docs/               roadmap, workflow and translation guide
+├─ public/             static assets served as-is
+├─ src/
+│  ├─ components/      presentational React components
+│  ├─ constants/       examples, provider fields, version
+│  ├─ data/            contextRules.{es,en}.json + per-locale access
+│  ├─ hooks/           useAnalysis — orchestration and analysis state
+│  ├─ i18n/            dictionaries, translator, locale detection, provider
+│  ├─ logic/           pure business logic, one module per step
+│  ├─ App.jsx          layout and app-level state
+│  └─ style.css        styles
+├─ tests/              Vitest suites for logic, i18n and rules
+└─ tools/              Python helper listing manual QA cases
 ```
 
-## How it works
+## Contributing
 
-1. The user writes a natural-language need.
-2. `classifyPrompt.js` compares the text against local category rules.
-3. Optional: `classifyWithAI.js` can use a configured AI provider and fall back to local rules if needed.
-4. `scoreContext.js` evaluates the quality of the prompt context.
-5. `generateAdvice.js` builds the recommendation object.
-6. `auditMissingContext.js` detects likely missing checklist items and turns them into risks and questions.
-7. `autofillContextFromReference.js` extracts useful context from pasted reference material.
-8. `ResultCard.jsx` displays formats, reasoning, detected keywords and diagnostic explanation.
-9. `generateRefinedPrompt.js` creates a better prompt for use with an AI assistant.
-10. `evaluateAIResponse.js` evaluates a pasted AI response and generates the next prompt.
-11. `exportMarkdown.js` can generate an exportable report including audits, autofill and response evaluation.
+Contributions are welcome, in English or Spanish. Read
+[CONTRIBUTING.md](CONTRIBUTING.md) ([español](CONTRIBUTING.es.md)) first.
 
-## Running locally
+Two rules specific to this project:
 
-Install dependencies:
+1. Every user-facing string goes in **both** `src/i18n/locales/es.js` and
+   `en.js`. A test fails if the two dictionaries drift apart.
+2. Every new context rule goes in **both** `contextRules.es.json` and
+   `contextRules.en.json`, with the same `id`. A test enforces this too.
 
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Open the local URL shown by Vite, usually:
-
-```text
-http://localhost:5173/
-```
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-> ⚠️ **Never build for a public deployment with keys in your `.env`.** Vite
-> inlines every `VITE_*` variable into the generated JavaScript bundle, so any
-> key present at build time would be exposed in plain text in the published
-> `dist/`. For a public demo, build **without** a `.env` — the local rules mode
-> works with no keys. See [SECURITY.md](SECURITY.md) for details.
-
-Run tests:
-
-```bash
-npm test
-```
-
-Preview production build:
-
-```bash
-npm run preview
-```
-
-## Manual QA helper
-
-ContextForge includes a small Python helper for manual validation cases.
-
-Run it from the project root:
-
-```bash
-python tools/classifier_manual_cases.py
-```
-
-or on Windows:
-
-```powershell
-py tools\classifier_manual_cases.py
-```
-
-This script does not connect to the app and does not duplicate the classifier logic. It simply lists manual test cases and expected results to support QA and regression checks.
-
-## Development workflow
-
-This project is intentionally built through small, documented steps:
-
-1. diagnose before modifying code;
-2. make the smallest safe change;
-3. run the build or relevant command;
-4. validate manually in the browser;
-5. document the decision;
-6. create a Git checkpoint.
-
-That workflow is part of the value of the project: it shows how AI-assisted development can stay controlled, understandable and auditable.
-
-## Documentation
-
-- [Roadmap](docs/ROADMAP.md)
-- [Codex workflow](docs/CODEX_WORKFLOW.md)
-- [Changelog](CHANGELOG.md)
-- [Contributing guide](CONTRIBUTING.md)
-- [Security policy](SECURITY.md)
-- [Support guide](SUPPORT.md)
+Run `npm run verify` before opening a pull request.
 
 ## Current limitations
 
-- Classification can run locally with heuristic rules, but AI mode depends on user-provided provider configuration.
-- Confidence is an approximation, not a statistical probability.
-- Some detected keywords can look technical or repetitive.
-- Direct provider calls from the browser may have CORS or key-exposure limitations depending on the provider. Anthropic in particular is called with the `anthropic-dangerous-direct-browser-access` header, which is intended for **local use only**: it sends your API key from the browser, so never build for a public deployment with an Anthropic key configured.
-- No backend is integrated yet.
-- Rules are edited manually in JSON.
+- Classification is heuristic. Confidence is an estimate, not a probability.
+- Rules are edited by hand in JSON; there is no editor in the app.
+- Browser-based provider calls are subject to each provider's CORS policy.
+  Anthropic in particular is called with the
+  `anthropic-dangerous-direct-browser-access` header, which sends your key from
+  the browser and is **local-use only**.
+- Text written by an AI provider is not retranslated when you switch language;
+  it updates on the next analysis.
+- There is no backend, and no history between sessions.
 
-## Roadmap
+## Documentation
 
-Planned or possible improvements:
-
-- Improve visual presentation of detected keywords.
-- Include diagnostic explanation and keywords in Markdown exports.
-- Add more manual QA cases.
-- Expand automated tests for classification logic.
-- Improve category weighting and false-positive handling.
-- Add local history with `localStorage`.
-- Add beginner/professional modes.
-- Add safer provider configuration patterns.
-- Add screenshots and a public demo.
-
-## Philosophy
-
-ContextForge is a context preparation layer.
-
-It is designed to help users think before asking an AI, structure their request, and provide the right supporting material.
-
-Better context usually leads to better AI output.
+| Document             | English                                    | Español                                          |
+| -------------------- | ------------------------------------------ | ------------------------------------------------ |
+| Roadmap              | [docs/ROADMAP.md](docs/ROADMAP.md)         | [docs/ROADMAP.es.md](docs/ROADMAP.es.md)         |
+| Translation guide    | [docs/TRANSLATION.md](docs/TRANSLATION.md) | [docs/TRANSLATION.es.md](docs/TRANSLATION.es.md) |
+| AI-assisted workflow | [docs/AI_WORKFLOW.md](docs/AI_WORKFLOW.md) | [docs/AI_WORKFLOW.es.md](docs/AI_WORKFLOW.es.md) |
+| Changelog            | [CHANGELOG.md](CHANGELOG.md)               | —                                                |
+| Contributing         | [CONTRIBUTING.md](CONTRIBUTING.md)         | [CONTRIBUTING.es.md](CONTRIBUTING.es.md)         |
+| Security policy      | [SECURITY.md](SECURITY.md)                 | [SECURITY.es.md](SECURITY.es.md)                 |
+| Support              | [SUPPORT.md](SUPPORT.md)                   | [SUPPORT.es.md](SUPPORT.es.md)                   |
+| Code of conduct      | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)   | [CODE_OF_CONDUCT.es.md](CODE_OF_CONDUCT.es.md)   |
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE).

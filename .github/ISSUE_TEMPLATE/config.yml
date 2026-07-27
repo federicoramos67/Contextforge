@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Question or idea / Pregunta o idea
+    url: https://github.com/federicoramos67/Contextforge/discussions
+    about: Open a discussion for questions, ideas or feedback. — Abrí una discusión para preguntas, ideas o feedback.
+  - name: Security issue / Problema de seguridad
+    url: https://github.com/federicoramos67/Contextforge/security/advisories/new
+    about: Report vulnerabilities privately, never as a public issue. — Reportá vulnerabilidades en privado, nunca como issue público.

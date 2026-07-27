@@ -17,7 +17,8 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: { ...globals.browser },
+      // __APP_VERSION__ lo inyecta Vite en build (ver `define` en vite.config.js)
+      globals: { ...globals.browser, __APP_VERSION__: 'readonly' },
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },

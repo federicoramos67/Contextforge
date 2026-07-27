@@ -23,7 +23,8 @@ describe('extractJSON', () => {
   });
 
   it('extracts JSON surrounded by explanatory text', () => {
-    const raw = 'Claro, aca tenes la respuesta: {"id":"long_document"} Espero que ayude.';
+    const raw =
+      'Claro, aca tenes la respuesta: {"id":"long_document"} Espero que ayude.';
     const result = extractJSON(raw);
 
     expect(result).toEqual({ id: 'long_document' });

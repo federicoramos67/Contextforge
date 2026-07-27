@@ -14,7 +14,10 @@ const baseCategory = {
 
 describe('generateAdvice', () => {
   it('maps the category fields straight into the advice object', () => {
-    const advice = generateAdvice({ ...baseCategory, matchedKeywords: ['n8n', 'webhook'] });
+    const advice = generateAdvice({
+      ...baseCategory,
+      matchedKeywords: ['n8n', 'webhook'],
+    });
 
     expect(advice.category).toBe('Automatizacion n8n');
     expect(advice.confidence).toBe(82);
@@ -23,7 +26,10 @@ describe('generateAdvice', () => {
   });
 
   it('builds a keyword-based explanation when there are matched keywords', () => {
-    const advice = generateAdvice({ ...baseCategory, matchedKeywords: ['n8n', 'webhook'] });
+    const advice = generateAdvice({
+      ...baseCategory,
+      matchedKeywords: ['n8n', 'webhook'],
+    });
 
     expect(advice.diagnosticExplanation).toContain('n8n, webhook');
   });
@@ -32,6 +38,6 @@ describe('generateAdvice', () => {
     const advice = generateAdvice({ ...baseCategory });
 
     expect(advice.matchedKeywords).toEqual([]);
-    expect(advice.diagnosticExplanation).toContain('sin keywords');
+    expect(advice.diagnosticExplanation).toContain('sin señales específicas');
   });
 });

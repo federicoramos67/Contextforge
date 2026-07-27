@@ -1,8 +1,13 @@
-export function generateAdvice(category) {
+import { DEFAULT_LOCALE, getTranslator } from '../i18n/index.js';
+
+export function generateAdvice(category, locale = DEFAULT_LOCALE) {
+  const t = getTranslator(locale);
   const matchedKeywords = category.matchedKeywords || [];
   const diagnosticExplanation = matchedKeywords.length
-    ? `Se detectó esta categoría porque el prompt contiene señales como: ${matchedKeywords.join(', ')}.`
-    : 'Se detectó esta categoría por coincidencias generales del texto, sin keywords específicas.';
+    ? t('advice.diagnosticWithKeywords', {
+        keywords: matchedKeywords.join(', '),
+      })
+    : t('advice.diagnosticWithoutKeywords');
 
   return {
     category: category.label,

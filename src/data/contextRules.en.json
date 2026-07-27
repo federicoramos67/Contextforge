@@ -1,0 +1,768 @@
+[
+  {
+    "id": "programming_debug",
+    "label": "Programming / code debugging",
+    "description": "The user needs an AI to read code, find errors or propose technical changes.",
+    "keywords": [
+      "code",
+      "coding",
+      "programming",
+      "python",
+      "javascript",
+      "typescript",
+      "react",
+      "vite",
+      "node",
+      "npm",
+      "error",
+      "bug",
+      "debug",
+      "stack trace",
+      "terminal",
+      "powershell",
+      "function",
+      "script",
+      "api",
+      "backend",
+      "frontend",
+      "compile",
+      "build",
+      "exception"
+    ],
+    "primaryFormats": [
+      "Source code pasted as text, or the project files",
+      "Complete error logs"
+    ],
+    "secondaryFormats": [
+      "Screenshot of the visual error if there is one",
+      "File tree",
+      "The exact command you ran",
+      "Node/Python/library versions"
+    ],
+    "avoid": [
+      "Blurry screenshots of code",
+      "Incomplete snippets with no error",
+      "Saying only 'it does not work'"
+    ],
+    "checklist": [
+      "Complete file or code block",
+      "Full error message",
+      "What you expected to happen",
+      "What actually happened",
+      "Command used to run it"
+    ],
+    "reason": "The AI needs to read real syntax, dependencies and complete error messages to reason precisely.",
+    "role": "Act as a senior developer and technical mentor.",
+    "expectedOutput": "a diagnosis of the problem, the likely cause, a step-by-step fix and corrected code"
+  },
+  {
+    "id": "visual_ui",
+    "label": "Visual interface / design / graphic setup",
+    "description": "The user needs the AI to look at a screen, design, interface, setting or visual problem.",
+    "keywords": [
+      "screenshot",
+      "screen",
+      "interface",
+      "design",
+      "ui",
+      "ux",
+      "canva",
+      "obs",
+      "visual",
+      "button",
+      "layout",
+      "web",
+      "landing",
+      "colors",
+      "colours",
+      "typography",
+      "font",
+      "settings",
+      "window",
+      "menu",
+      "redesign",
+      "mockup"
+    ],
+    "primaryFormats": ["A complete, sharp screenshot"],
+    "secondaryFormats": [
+      "A description of the goal",
+      "An extra screenshot of the desired state",
+      "Screen resolution",
+      "Operating system or application used"
+    ],
+    "avoid": [
+      "Angled photos of the monitor",
+      "Cropped screenshots with no context",
+      "Vague descriptions with no image"
+    ],
+    "checklist": [
+      "Full screenshot",
+      "Visual goal",
+      "Which part worries you",
+      "What you want to change",
+      "Device or program used"
+    ],
+    "reason": "When the problem is visual, the AI needs to see layout, hierarchy, buttons and spatial relationships.",
+    "role": "Act as a specialist in visual design, UX and interface diagnosis.",
+    "expectedOutput": "prioritized observations, concrete changes and a step-by-step guide"
+  },
+  {
+    "id": "marketing_campaign",
+    "label": "Marketing / campaigns / commercial email",
+    "description": "The user wants to create, improve or analyze campaigns, commercial emails, newsletters, ads or conversion assets.",
+    "keywords": [
+      "campaign",
+      "email",
+      "newsletter",
+      "marketing",
+      "customers",
+      "subscription",
+      "subscriptions",
+      "renew",
+      "cta",
+      "call to action",
+      "ad",
+      "ads",
+      "copy",
+      "copywriting",
+      "conversion",
+      "funnel",
+      "audience"
+    ],
+    "primaryFormats": [
+      "Campaign goal",
+      "Target audience",
+      "Offer or value proposition",
+      "CTA"
+    ],
+    "secondaryFormats": [
+      "Brand tone",
+      "Publishing channel",
+      "Commercial or legal constraints",
+      "An example of a previous campaign"
+    ],
+    "avoid": [
+      "Asking to 'make it sell' with no audience or offer",
+      "Not defining the CTA",
+      "Leaving out commercial constraints",
+      "Not clarifying brand tone"
+    ],
+    "checklist": [
+      "Goal",
+      "Target audience",
+      "Offer",
+      "Tone",
+      "CTA",
+      "Channel",
+      "Constraints",
+      "Previous reference if any"
+    ],
+    "reason": "Commercial campaigns need goal, audience, offer, tone, CTA and constraints to produce actionable, measurable copy.",
+    "role": "Act as a marketing strategist, copywriter and campaign consultant.",
+    "expectedOutput": "a campaign brief, proposed copy, message structure, variants and a publishing checklist"
+  },
+  {
+    "id": "web_analysis",
+    "label": "Web page analysis / conversion / SEO",
+    "description": "The user wants to evaluate a website, landing page, online content, SEO or conversion.",
+    "keywords": [
+      "page",
+      "site",
+      "website",
+      "landing",
+      "seo",
+      "conversion",
+      "html",
+      "url",
+      "link",
+      "web",
+      "hero",
+      "cta",
+      "sales",
+      "traffic",
+      "ranking",
+      "bounce rate"
+    ],
+    "primaryFormats": [
+      "Public URL if there is one",
+      "Desktop and mobile screenshots"
+    ],
+    "secondaryFormats": [
+      "Partial HTML of the relevant section",
+      "Conversion goal",
+      "Target audience",
+      "Offer or value proposition"
+    ],
+    "avoid": [
+      "Sending just the link with no goal",
+      "Full HTML with unnecessary scripts",
+      "Cropped hero screenshots without the rest of the page"
+    ],
+    "checklist": [
+      "URL",
+      "Desktop screenshot",
+      "Mobile screenshot",
+      "Page goal",
+      "Target audience",
+      "Which metric you want to improve"
+    ],
+    "reason": "For a website, the AI combines visual context, technical structure and business goal.",
+    "role": "Act as a UX, conversion and web analytics consultant.",
+    "expectedOutput": "a conversion diagnosis, clarity problems, structural improvements and prioritized recommendations"
+  },
+  {
+    "id": "long_document",
+    "label": "Long document / PDF / report",
+    "description": "The user wants to summarize, proofread or analyze long documents.",
+    "keywords": [
+      "pdf",
+      "document",
+      "report",
+      "thesis",
+      "manual",
+      "book",
+      "summary",
+      "summarize",
+      "summarise",
+      "contract",
+      "long text",
+      "article",
+      "paper",
+      "regulation",
+      "whitepaper"
+    ],
+    "primaryFormats": [
+      "A PDF with selectable text",
+      "Text pasted as Markdown if possible"
+    ],
+    "secondaryFormats": [
+      "Table of contents or key sections",
+      "Reading goal",
+      "Specific questions",
+      "Summary criteria"
+    ],
+    "avoid": [
+      "Blurry scanned PDFs",
+      "Asking to 'summarize everything' with no goal",
+      "Sending loose pages out of order"
+    ],
+    "checklist": [
+      "Complete document",
+      "Goal of the analysis",
+      "Desired summary length",
+      "Priority sections",
+      "Output format"
+    ],
+    "reason": "Long documents need order, a goal and good text extraction to avoid omissions or distortions.",
+    "role": "Act as an academic analyst and document editor.",
+    "expectedOutput": "a structured summary, main ideas, observations and an answer matching the goal"
+  },
+  {
+    "id": "research",
+    "label": "Research / source comparison",
+    "description": "The user needs to research, compare options, verify data or decide using external information.",
+    "keywords": [
+      "research",
+      "investigate",
+      "sources",
+      "compare",
+      "comparison",
+      "best",
+      "recommendation",
+      "market",
+      "current",
+      "price",
+      "alternatives",
+      "evidence",
+      "references",
+      "benchmark"
+    ],
+    "primaryFormats": [
+      "A concrete research question",
+      "Initial sources or links if they already exist"
+    ],
+    "secondaryFormats": [
+      "Comparison criteria",
+      "Country or context",
+      "Required date or recency",
+      "Delivery format"
+    ],
+    "avoid": [
+      "Asking for research with no country or date",
+      "Accepting sources without verifying them",
+      "Mixing opinion with evidence"
+    ],
+    "checklist": [
+      "Core question",
+      "Geographic scope",
+      "Date/recency",
+      "Decision criteria",
+      "Accepted source types"
+    ],
+    "reason": "Research needs clear scope and criteria to avoid generic or outdated answers.",
+    "role": "Act as a researcher and synthesizer of reliable sources.",
+    "expectedOutput": "a criteria-based comparison, key findings, limits and sources"
+  },
+  {
+    "id": "automation",
+    "label": "Automation / agents / workflows",
+    "description": "The user wants to automate processes or design workflows with inputs, outputs and tools.",
+    "keywords": [
+      "automate",
+      "automation",
+      "automatic",
+      "workflow",
+      "trigger",
+      "integration",
+      "integrate",
+      "connect",
+      "scheduled task",
+      "no-code",
+      "no code",
+      "bot",
+      "agent",
+      "agents",
+      "process",
+      "webhook",
+      "low-code",
+      "pipeline",
+      "endpoint",
+      "scraping",
+      "api",
+      "zapier",
+      "n8n",
+      "make",
+      "integromat",
+      "ifttt",
+      "pipedream",
+      "power automate",
+      "apps script",
+      "spreadsheet trigger"
+    ],
+    "primaryFormats": [
+      "A description of the current flow and the desired outcome",
+      "The tool or platform used (Zapier, n8n, Make, Apps Script…)",
+      "Example input and output data"
+    ],
+    "secondaryFormats": [
+      "Available tools",
+      "Constraints",
+      "Frequency",
+      "Current errors",
+      "Never share credentials; service names only"
+    ],
+    "avoid": [
+      "Saying 'automate this' with no process",
+      "Sharing private keys",
+      "Not defining the expected final outcome"
+    ],
+    "checklist": [
+      "How the flow starts",
+      "Current steps",
+      "Expected output",
+      "Available tools",
+      "Frequency",
+      "Constraints"
+    ],
+    "reason": "An automated flow is designed best when inputs, transformations, decisions and outputs are clear.",
+    "role": "Act as an automation architect and workflow designer.",
+    "expectedOutput": "a logical diagram, steps, tools, risks and an MVP version"
+  },
+  {
+    "id": "data_spreadsheet",
+    "label": "Data / Excel / CSV / tabular analysis",
+    "description": "The user wants to analyze tables, spreadsheets or structured data.",
+    "keywords": [
+      "excel",
+      "csv",
+      "table",
+      "data",
+      "dataset",
+      "spreadsheet",
+      "sheet",
+      "column",
+      "row",
+      "chart",
+      "statistics",
+      "power query",
+      "pivot",
+      "formula",
+      "vlookup"
+    ],
+    "primaryFormats": ["A CSV or Excel file", "A sample of columns and rows"],
+    "secondaryFormats": [
+      "Data dictionary",
+      "The exact question",
+      "Expected result",
+      "Cleaning rules"
+    ],
+    "avoid": [
+      "Screenshots of tables when a file could be sent",
+      "Data with no headers",
+      "Not explaining what each column means"
+    ],
+    "checklist": [
+      "Data file",
+      "Analysis question",
+      "Key columns",
+      "Expected result",
+      "Output format"
+    ],
+    "reason": "Tabular data is understood far better in structured formats than as an image.",
+    "role": "Act as a data analyst and spreadsheet specialist.",
+    "expectedOutput": "cleaning, analysis, formulas or charts as appropriate"
+  },
+  {
+    "id": "writing_editing",
+    "label": "Writing / proofreading / style",
+    "description": "The user needs to improve text, proofread it, summarize it or adapt it to a tone.",
+    "keywords": [
+      "write",
+      "writing",
+      "draft",
+      "proofread",
+      "correct",
+      "spelling",
+      "grammar",
+      "summarize",
+      "summary",
+      "tone",
+      "formal",
+      "message",
+      "email",
+      "letter",
+      "academic",
+      "rephrase",
+      "rewrite",
+      "style"
+    ],
+    "primaryFormats": ["Editable text pasted directly"],
+    "secondaryFormats": [
+      "Desired tone",
+      "Target reader",
+      "Desired length",
+      "Output format"
+    ],
+    "avoid": [
+      "Screenshotting text that could be copied",
+      "Not stating the tone",
+      "Asking for corrections without saying whether rewriting is allowed"
+    ],
+    "checklist": [
+      "Complete text",
+      "Goal",
+      "Tone",
+      "Recipient",
+      "Permission to rewrite or only proofread"
+    ],
+    "reason": "To proofread or write, editable text preserves meaning, improves precision and avoids visual reading errors.",
+    "role": "Act as an academic proofreader and a clear editor.",
+    "expectedOutput": "corrected text, a short explanation of the changes and a final ready-to-use version"
+  },
+  {
+    "id": "multimedia_video_editing",
+    "label": "Multimedia / video and audio editing",
+    "description": "The user wants to edit, improve, transcribe, subtitle or produce multimedia content.",
+    "keywords": [
+      "video",
+      "audio",
+      "editing",
+      "clip",
+      "reel",
+      "short",
+      "youtube",
+      "tiktok",
+      "subtitles",
+      "captions",
+      "transcription",
+      "transcribe",
+      "voice",
+      "voiceover",
+      "podcast",
+      "premiere",
+      "capcut",
+      "davinci",
+      "after effects",
+      "ffmpeg",
+      "timeline"
+    ],
+    "primaryFormats": [
+      "The video or audio file if the tool allows it",
+      "A description of the editing goal",
+      "The exact clip or timestamp of the problem"
+    ],
+    "secondaryFormats": [
+      "Script or base text",
+      "Desired final format",
+      "Publishing platform",
+      "Target duration",
+      "Screenshot of the timeline or export settings"
+    ],
+    "avoid": [
+      "Asking to 'make it go viral' without explaining audience or goal",
+      "Sending screenshots with no audio or video when the problem depends on the material",
+      "Not stating platform, duration or output format"
+    ],
+    "checklist": [
+      "File or link to the material",
+      "Editing goal",
+      "Key timestamps",
+      "Output format",
+      "Target platform",
+      "Duration or style constraints"
+    ],
+    "reason": "The AI needs to understand the material, the narrative goal, the platform and the technical constraints to propose a useful edit.",
+    "role": "Act as a multimedia editor, technical scriptwriter and video production specialist.",
+    "expectedOutput": "an editing plan, a list of cuts or improvements, export settings and recommendations by priority"
+  },
+  {
+    "id": "n8n_automation",
+    "label": "n8n automation",
+    "description": "The user wants to design, fix or improve a specific n8n workflow.",
+    "keywords": [
+      "n8n",
+      "n8n workflow",
+      "n8n node",
+      "node",
+      "n8n credentials",
+      "n8n webhook",
+      "n8n trigger",
+      "n8n json",
+      "execution",
+      "error node",
+      "http request",
+      "set node",
+      "code node",
+      "if node"
+    ],
+    "primaryFormats": [
+      "The workflow JSON export without credentials",
+      "A screenshot of the full workflow",
+      "The error message or failed execution"
+    ],
+    "secondaryFormats": [
+      "Example input",
+      "Expected output",
+      "Connected services",
+      "The exact node that fails",
+      "Flow frequency",
+      "Credential or permission constraints"
+    ],
+    "avoid": [
+      "Sharing API keys, tokens or passwords",
+      "Sending only a screenshot of an isolated node",
+      "Leaving out input and output examples",
+      "Changing many nodes without testing in parts"
+    ],
+    "checklist": [
+      "Exported workflow without secrets",
+      "The failing node",
+      "Example input",
+      "Expected output",
+      "Full error",
+      "Services involved"
+    ],
+    "reason": "n8n is diagnosed best by seeing the workflow structure, the data flowing between nodes and the exact execution error.",
+    "role": "Act as an automation architect specialized in n8n.",
+    "expectedOutput": "a workflow diagnosis, the likely cause, node-by-node changes and a test plan"
+  },
+  {
+    "id": "local_ai_models",
+    "label": "Local AI models / LLMs on your own machine",
+    "description": "The user wants to install, choose, run or optimize local AI models.",
+    "keywords": [
+      "local model",
+      "local models",
+      "local llm",
+      "ollama",
+      "lm studio",
+      "llama.cpp",
+      "kobold",
+      "text generation webui",
+      "gguf",
+      "quantization",
+      "quantisation",
+      "gpu",
+      "vram",
+      "cpu",
+      "ram",
+      "mistral",
+      "llama",
+      "qwen",
+      "gemma",
+      "embedding",
+      "local rag",
+      "inference"
+    ],
+    "primaryFormats": [
+      "What you want to use the model for",
+      "Available hardware",
+      "Operating system",
+      "The model or tool you want to use"
+    ],
+    "secondaryFormats": [
+      "RAM and VRAM",
+      "Exact GPU/CPU",
+      "Required context size",
+      "Main language",
+      "Expected speed",
+      "Installation errors or logs"
+    ],
+    "avoid": [
+      "Choosing a model without stating your hardware",
+      "Confusing a local model with an external API",
+      "Sharing unnecessary private paths or files",
+      "Asking for maximum performance without defining the task"
+    ],
+    "checklist": [
+      "Intended use",
+      "Operating system",
+      "CPU/GPU",
+      "RAM and VRAM",
+      "Local tool",
+      "Candidate model",
+      "Current error or limitation"
+    ],
+    "reason": "Local models depend heavily on hardware, model format, quantization, context size and the runtime you use.",
+    "role": "Act as a local AI engineer and LLM deployment consultant.",
+    "expectedOutput": "a model recommendation, suggested settings, installation steps and the limits to expect from your hardware"
+  },
+  {
+    "id": "advanced_data_analysis",
+    "label": "Data analysis / metrics / datasets",
+    "description": "The user wants to analyze data, find patterns, clean datasets or build metrics.",
+    "keywords": [
+      "data analysis",
+      "dataset",
+      "data",
+      "metrics",
+      "kpi",
+      "kpis",
+      "dashboard",
+      "power bi",
+      "looker",
+      "tableau",
+      "sql",
+      "pandas",
+      "notebook",
+      "statistics",
+      "correlation",
+      "segmentation",
+      "data cleaning",
+      "cohort"
+    ],
+    "primaryFormats": [
+      "CSV, Excel, SQL or a representative data sample",
+      "A concrete analytical question",
+      "Definition of the key metrics or columns"
+    ],
+    "secondaryFormats": [
+      "Data dictionary",
+      "Cleaning rules",
+      "Period analyzed",
+      "Relevant segments",
+      "An example of the expected result",
+      "Privacy limitations"
+    ],
+    "avoid": [
+      "Sending only a screenshot of the table",
+      "Not explaining what each column means",
+      "Asking for conclusions with no analytical question",
+      "Mixing data from different periods without saying so"
+    ],
+    "checklist": [
+      "Data file or sample",
+      "Core question",
+      "Key columns",
+      "Metric definitions",
+      "Period",
+      "Output format",
+      "Privacy rules"
+    ],
+    "reason": "Data analysis needs structure, column meaning, a clear question and cleaning criteria to avoid wrong conclusions.",
+    "role": "Act as a senior data analyst and metrics specialist.",
+    "expectedOutput": "suggested cleaning, exploratory analysis, findings, computable metrics and recommended visualizations"
+  },
+  {
+    "id": "academic_research",
+    "label": "Academic research / papers / theoretical framework",
+    "description": "The user needs to analyze academic literature, frame research questions or structure academic work.",
+    "keywords": [
+      "academic research",
+      "paper",
+      "papers",
+      "scientific article",
+      "theoretical framework",
+      "state of the art",
+      "methodology",
+      "hypothesis",
+      "citations",
+      "apa",
+      "doi",
+      "scopus",
+      "pubmed",
+      "google scholar",
+      "literature review",
+      "peer review",
+      "abstract"
+    ],
+    "primaryFormats": [
+      "The research question",
+      "Initial papers or references",
+      "Topic and scope of the work"
+    ],
+    "secondaryFormats": [
+      "Inclusion and exclusion criteria",
+      "Citation format",
+      "Academic level",
+      "Hypothesis or problem",
+      "Planned methodology",
+      "Date or time range of the sources"
+    ],
+    "avoid": [
+      "Asking for a literature review with no delimited topic",
+      "Using unverified sources as evidence",
+      "Not separating opinion from academic finding",
+      "Asking for invented citations"
+    ],
+    "checklist": [
+      "Research question",
+      "Delimited topic",
+      "Initial sources",
+      "Search criteria",
+      "Citation format",
+      "Academic level",
+      "Type of deliverable"
+    ],
+    "reason": "Academic research needs scope, method, source criteria and traceability so it does not produce shallow summaries or fake citations.",
+    "role": "Act as an academic researcher and methodological advisor.",
+    "expectedOutput": "a literature synthesis, research questions, a theoretical framework structure, methodological criteria and warnings about the evidence"
+  },
+  {
+    "id": "general_context",
+    "label": "General question / not enough context",
+    "description": "There are not enough signals to classify with confidence.",
+    "keywords": [],
+    "primaryFormats": ["A more concrete description of the task"],
+    "secondaryFormats": [
+      "Goal",
+      "Available material",
+      "Expected result",
+      "Constraints"
+    ],
+    "avoid": [
+      "Questions that are far too broad",
+      "Not explaining what the answer is needed for"
+    ],
+    "checklist": [
+      "Goal",
+      "Context",
+      "Available material",
+      "What you want to receive",
+      "Limits or conditions"
+    ],
+    "reason": "When the intent is unclear, the best improvement is to define the goal, the available material and the expected output.",
+    "role": "Act as an advisor who helps organize the request before using an AI.",
+    "expectedOutput": "guiding questions and a general context recommendation"
+  }
+]

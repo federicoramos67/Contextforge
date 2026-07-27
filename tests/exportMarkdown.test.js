@@ -20,7 +20,7 @@ describe('buildMarkdownReport', () => {
   it('renders the core report with the mandatory sections', () => {
     const report = buildMarkdownReport(baseInput);
 
-    expect(report).toContain('# Diagnostico de contexto - ContextForge');
+    expect(report).toContain('# Diagnóstico de contexto — ContextForge');
     expect(report).toContain('Automatizacion n8n');
     expect(report).toContain('Confianza estimada: 87%');
     expect(report).toContain('- JSON del workflow');
@@ -33,15 +33,17 @@ describe('buildMarkdownReport', () => {
   it('shows a solid-context note when there are no improvements', () => {
     const report = buildMarkdownReport(baseInput);
 
-    expect(report).toContain('El contexto inicial es solido.');
+    expect(report).toContain('El contexto inicial es sólido.');
   });
 
   it('omits optional sections when their data is absent', () => {
     const report = buildMarkdownReport(baseInput);
 
-    expect(report).not.toContain('Auditoria de contexto faltante');
-    expect(report).not.toContain('Contexto rellenado desde material de referencia');
-    expect(report).not.toContain('Evaluacion de respuesta de IA');
+    expect(report).not.toContain('Auditoría de contexto faltante');
+    expect(report).not.toContain(
+      'Contexto rellenado desde material de referencia',
+    );
+    expect(report).not.toContain('Evaluación de respuesta de IA');
   });
 
   it('includes the audit section when a missing-context audit is provided', () => {
@@ -54,7 +56,7 @@ describe('buildMarkdownReport', () => {
       },
     });
 
-    expect(report).toContain('Auditoria de contexto faltante');
+    expect(report).toContain('Auditoría de contexto faltante');
     expect(report).toContain('- version de n8n');
     expect(report).toContain('- la IA puede inventar nodos');
     expect(report).toContain('- que webhook dispara el flujo?');
@@ -65,7 +67,10 @@ describe('buildMarkdownReport', () => {
       ...baseInput,
       referenceText: 'Documentacion pegada.',
       contextAutofill: {
-        inferredContext: { objetivo: 'migrar datos', formatos: ['CSV', 'JSON'] },
+        inferredContext: {
+          objetivo: 'migrar datos',
+          formatos: ['CSV', 'JSON'],
+        },
         filledItems: ['objetivo del workflow'],
         stillMissingItems: ['credenciales'],
         updatedPrompt: 'Prompt actualizado con contexto.',
@@ -91,7 +96,7 @@ describe('buildMarkdownReport', () => {
       },
     });
 
-    expect(report).toContain('Evaluacion de respuesta de IA');
+    expect(report).toContain('Evaluación de respuesta de IA');
     expect(report).toContain('Parcial');
     expect(report).toContain('- identifico el nodo con error');
     expect(report).toContain('Pedile el JSON corregido completo.');

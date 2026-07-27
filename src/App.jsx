@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PromptInput from './components/PromptInput';
 import ResultCard from './components/ResultCard';
 import Checklist from './components/Checklist';
@@ -9,14 +9,33 @@ import AIResponseEvaluator from './components/AIResponseEvaluator';
 import ContextAutofill from './components/ContextAutofill';
 import ProviderSettings from './components/ProviderSettings';
 import ModeSwitcher from './components/ModeSwitcher';
-import { getActiveProvider, getStoredKeys, ACTIVE_PROVIDER_KEY } from './config';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import {
+  getActiveProvider,
+  getStoredKeys,
+  ACTIVE_PROVIDER_KEY,
+} from './config';
 import { useAnalysis } from './hooks/useAnalysis';
-import { examples } from './constants/examples';
+import { getExamples } from './constants/examples';
+import { useI18n } from './i18n/useI18n.js';
+import { APP_VERSION } from './constants/version';
 import './style.css';
 
 export default function App() {
-  const [copiedMessage, setCopiedMessage] = useState('');
+  const { locale, t } = useI18n();
   const [useAI, setUseAI] = useState(false);
+
+  // El mensaje de estado es un aviso puntual, ya renderizado en el idioma en
+  // que se disparó. Se guarda junto a ese idioma y se muestra solo si sigue
+  // coincidiendo con el actual, así al cambiar de idioma desaparece en lugar
+  // de quedar desfasado. Es estado derivado: no hace falta un efecto.
+  const [statusMessage, setStatusMessage] = useState(null);
+  const setCopiedMessage = useCallback(
+    (text) => setStatusMessage(text ? { text, locale } : null),
+    [locale],
+  );
+  const copiedMessage =
+    statusMessage?.locale === locale ? statusMessage.text : '';
 
   // Estado del panel de configuración (el resto vive dentro de ProviderSettings)
   const [showConfig, setShowConfig] = useState(false);
@@ -30,6 +49,9 @@ export default function App() {
   // getActiveProvider() lee localStorage en cada render, por lo que se actualiza
   // automáticamente tras guardar o borrar keys sin necesidad de estado extra
   const activeProvider = getActiveProvider();
+
+  // Los ejemplos precargados se traducen junto con el resto de la interfaz
+  const examples = useMemo(() => getExamples(t), [t]);
 
   // Dominio de análisis: estado del prompt, resultados y acciones sobre ellos
   const {
@@ -56,15 +78,14 @@ export default function App() {
     <main className="app-shell">
       <header className="hero">
         <div>
-          <p className="eyebrow">Herramienta de estrategia de contexto para IA</p>
+          <p className="eyebrow">{t('app.eyebrow')}</p>
           <h1>ContextForge</h1>
-          <p>
-            Escribí un prompt en lenguaje natural y recibí una recomendación clara sobre qué archivos,
-            formatos y contexto conviene compartir con una IA para obtener mejores respuestas.
-          </p>
+          <p>{t('app.intro')}</p>
         </div>
         <div className="hero-badge">
-          <span>v0.5.1-alpha</span>
+          <span>{APP_VERSION}</span>
+
+          <LanguageSwitcher />
 
           <ModeSwitcher
             useAI={useAI}
@@ -95,8 +116,8 @@ export default function App() {
           la siguiente acción, así el usuario se entera del motivo real. */}
       {analysis?.category?._fallback && (
         <div className="fallback-notice" role="status">
-          <strong>Modo IA no disponible.</strong> Este resultado se generó con el
-          modo reglas local. Motivo: {analysis.category._fallbackReason}
+          <strong>{t('app.fallbackTitle')}</strong>{' '}
+          {t('app.fallbackBody', { reason: analysis.category._fallbackReason })}
         </div>
       )}
 
@@ -108,7 +129,7 @@ export default function App() {
           examples={examples}
           onExample={(text) => {
             setUserText(text);
-            setCopiedMessage('Ejemplo cargado. Presioná "Analizar contexto".');
+            setCopiedMessage(t('status.exampleLoaded'));
           }}
         />
 
@@ -126,7 +147,12 @@ export default function App() {
             setContextAutofill(null);
           }}
           onAutofill={autofillReferenceContext}
-          onCopyUpdatedPrompt={() => copyToClipboard(contextAutofill.updatedPrompt, 'Prompt actualizado copiado.')}
+          onCopyUpdatedPrompt={() =>
+            copyToClipboard(
+              contextAutofill.updatedPrompt,
+              t('status.updatedPromptCopied'),
+            )
+          }
         />
       )}
 
@@ -139,8 +165,15 @@ export default function App() {
 
       <PromptSuggestion
         prompt={analysis?.refinedPrompt}
-        onCopyPrompt={() => copyToClipboard(analysis.refinedPrompt, 'Prompt refinado copiado.')}
-        onCopyReport={() => copyToClipboard(markdownReport, 'Diagnóstico completo copiado en Markdown.')}
+        onCopyPrompt={() =>
+          copyToClipboard(
+            analysis.refinedPrompt,
+            t('status.refinedPromptCopied'),
+          )
+        }
+        onCopyReport={() =>
+          copyToClipboard(markdownReport, t('status.reportCopied'))
+        }
         onDownloadMarkdown={downloadMarkdown}
       />
 
@@ -153,7 +186,12 @@ export default function App() {
             setResponseEvaluation(null);
           }}
           onEvaluate={evaluateResponse}
-          onCopyNextPrompt={() => copyToClipboard(responseEvaluation.nextPrompt, 'Siguiente prompt copiado.')}
+          onCopyNextPrompt={() =>
+            copyToClipboard(
+              responseEvaluation.nextPrompt,
+              t('status.nextPromptCopied'),
+            )
+          }
         />
       )}
     </main>

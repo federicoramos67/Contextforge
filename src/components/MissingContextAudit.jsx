@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/useI18n.js';
+
 function AuditBlock({ title, items }) {
   if (!items?.length) return null;
 
@@ -14,19 +16,24 @@ function AuditBlock({ title, items }) {
 }
 
 export default function MissingContextAudit({ audit }) {
+  const { t } = useI18n();
+
   if (!audit) return null;
 
   return (
     <section className="panel audit-card">
       <div className="section-heading">
-        <p className="eyebrow">Auditoria de contexto</p>
-        <h2>Que conviene aclarar antes de consultar a la IA</h2>
+        <p className="eyebrow">{t('audit.eyebrow')}</p>
+        <h2>{t('audit.title')}</h2>
       </div>
 
       <div className="result-grid">
-        <AuditBlock title="Contexto faltante" items={audit.missingItems} />
-        <AuditBlock title="Riesgos si no se agrega" items={audit.riskWarnings} />
-        <AuditBlock title="Preguntas utiles antes de consultar a la IA" items={audit.clarificationQuestions} />
+        <AuditBlock title={t('audit.missing')} items={audit.missingItems} />
+        <AuditBlock title={t('audit.risks')} items={audit.riskWarnings} />
+        <AuditBlock
+          title={t('audit.questions')}
+          items={audit.clarificationQuestions}
+        />
       </div>
     </section>
   );

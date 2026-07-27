@@ -1,6 +1,13 @@
 :root {
   color-scheme: dark;
-  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    'IBM Plex Sans',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #e5ecff;
@@ -20,7 +27,11 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(61, 91, 255, 0.22), transparent 38rem),
+    radial-gradient(
+      circle at top left,
+      rgba(61, 91, 255, 0.22),
+      transparent 38rem
+    ),
     linear-gradient(135deg, #0d111c 0%, #111827 55%, #07111f 100%);
 }
 
@@ -37,7 +48,8 @@ button {
 h1,
 h2,
 h3 {
-  font-family: "Space Grotesk", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family:
+    'Space Grotesk', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
 }
 
@@ -297,21 +309,6 @@ li + li {
 .score-panel h2 {
   font-size: 2.7rem;
   margin-bottom: 4px;
-}
-
-.level-bajo {
-  background: rgba(255, 128, 128, 0.12);
-  color: #ffb3b3;
-}
-
-.level-medio {
-  background: rgba(255, 205, 107, 0.12);
-  color: #ffe3aa;
-}
-
-.level-alto {
-  background: rgba(124, 255, 190, 0.12);
-  color: #a9ffd7;
 }
 
 .score-bar {
@@ -615,6 +612,56 @@ li + li {
 }
 
 /* Segmented control: [Modo reglas][● Modo IA · X][⚙] */
+/* Selector de idioma [ES][EN]: mismo lenguaje visual de pill segmentado que
+   .mode-switcher, para que el header se lea como una sola familia de controles. */
+.language-switcher {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.language-btn {
+  padding: 5px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #5a6e94;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.language-btn:first-child {
+  border-radius: 999px 0 0 999px;
+  border-right: none;
+}
+
+.language-btn:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.language-btn.active {
+  background: rgba(125, 161, 255, 0.18);
+  border-color: rgba(125, 161, 255, 0.35);
+  color: #b8cbff;
+}
+
+.language-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #93a4c7;
+}
+
+.language-btn:focus-visible,
+.mode-btn:focus-visible,
+.mode-gear-btn:focus-visible {
+  outline: 2px solid rgba(125, 161, 255, 0.7);
+  outline-offset: 2px;
+}
+
 .mode-switcher {
   display: flex;
   align-items: center;
@@ -635,7 +682,10 @@ li + li {
   letter-spacing: 0.04em;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 /* Segmento izquierdo: "Modo reglas" — hijo directo del switcher para no afectar .mode-btn-ai */
@@ -688,7 +738,10 @@ li + li {
   opacity: 0.5;
   cursor: pointer;
   margin: 0;
-  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 
 .mode-gear-btn:hover,
@@ -715,8 +768,15 @@ li + li {
 
 /* Pulso suave cuando el modo IA está activo */
 @keyframes mode-dot-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.45; transform: scale(0.8); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
 }
 
 .mode-dot--pulse {

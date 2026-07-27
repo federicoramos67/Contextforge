@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/useI18n.js';
+
 // Control segmentado del header: [Modo reglas] [● Modo IA · X] [⚙].
 // Sin estado propio: recibe el modo y el proveedor activo por props.
 export default function ModeSwitcher({
@@ -7,6 +9,8 @@ export default function ModeSwitcher({
   showConfig,
   setShowConfig,
 }) {
+  const { t } = useI18n();
+
   const shortName = activeProvider
     ? activeProvider.name.length > 7
       ? activeProvider.name.slice(0, 6) + '…'
@@ -19,9 +23,9 @@ export default function ModeSwitcher({
       <button
         className={`mode-btn${!useAI ? ' active' : ''}`}
         onClick={() => setUseAI(false)}
-        title="Usar clasificación local por reglas"
+        title={t('modes.rulesTitle')}
       >
-        Modo reglas
+        {t('modes.rules')}
       </button>
 
       {/* Segmento derecho: botón IA + sufijo gear formando una sola unidad pill */}
@@ -42,19 +46,27 @@ export default function ModeSwitcher({
           }}
           title={
             !activeProvider
-              ? 'Configurá una API key para activar el Modo IA'
-              : `Activar Modo IA — ${activeProvider.name}`
+              ? t('modes.aiNeedsKeyTitle')
+              : t('modes.aiActivateTitle', { name: activeProvider.name })
           }
         >
           {!activeProvider ? (
             // Estado 1: sin proveedor
-            <>Modo IA <span className="mode-gear-inline">⚙</span></>
+            <>
+              {t('modes.ai')} <span className="mode-gear-inline">⚙</span>
+            </>
           ) : useAI ? (
             // Estado 3: IA activa, dot pulsante + nombre abreviado
-            <><span className="mode-dot mode-dot--pulse" />{shortName}</>
+            <>
+              <span className="mode-dot mode-dot--pulse" />
+              {shortName}
+            </>
           ) : (
             // Estado 2: proveedor listo, modo reglas activo
-            <><span className="mode-dot" />Modo IA · {shortName}</>
+            <>
+              <span className="mode-dot" />
+              {t('modes.ai')} · {shortName}
+            </>
           )}
         </button>
 
@@ -63,8 +75,8 @@ export default function ModeSwitcher({
           <button
             className={`mode-gear-btn${showConfig ? ' open' : ''}`}
             onClick={() => setShowConfig((s) => !s)}
-            title="Configurar proveedores de IA"
-            aria-label="Configurar API"
+            title={t('modes.settingsTitle')}
+            aria-label={t('modes.settingsAriaLabel')}
           >
             ⚙
           </button>
