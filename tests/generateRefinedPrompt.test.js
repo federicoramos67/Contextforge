@@ -32,6 +32,8 @@ describe('generateRefinedPrompt', () => {
   it('includes the expected output', () => {
     const prompt = generateRefinedPrompt('texto', category);
 
-    expect(prompt).toContain('Necesito que me ayudes con: un diagnostico paso a paso.');
+    expect(prompt).toContain(
+      'Necesito que me ayudes con: un diagnostico paso a paso.',
+    );
   });
 });

@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  # Dependencias de npm. Las actualizaciones menores y de parche se agrupan en
+  # un solo PR para no inundar la cola de revisión; las mayores vienen sueltas
+  # porque suelen necesitar cambios de código.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # Acciones usadas por los workflows de CI y de deploy.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

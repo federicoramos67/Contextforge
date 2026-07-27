@@ -1,21 +1,28 @@
-export function generateRefinedPrompt(userText, category) {
+import { DEFAULT_LOCALE, getTranslator } from '../i18n/index.js';
+
+export function generateRefinedPrompt(
+  userText,
+  category,
+  locale = DEFAULT_LOCALE,
+) {
+  const t = getTranslator(locale);
   const files = [...category.primaryFormats, ...category.secondaryFormats]
+    .map((item) => `- ${item}`)
+    .join('\n');
+  const conditions = t('refinedPrompt.conditions')
     .map((item) => `- ${item}`)
     .join('\n');
 
   return `${category.role}
 
-Tarea original del usuario:
+${t('refinedPrompt.originalTask')}
 "${userText.trim()}"
 
-Antes de responder, considerá que voy a compartir este contexto recomendado:
+${t('refinedPrompt.contextIntro')}
 ${files}
 
-Necesito que me ayudes con: ${category.expectedOutput}.
+${t('refinedPrompt.needHelpWith', { expectedOutput: category.expectedOutput })}
 
-Condiciones de respuesta:
-- Explicá primero qué información falta, si falta algo.
-- Priorizá lo más importante.
-- Devolvé pasos concretos y verificables.
-- No inventes datos que no estén en el material compartido.`;
+${t('refinedPrompt.conditionsTitle')}
+${conditions}`;
 }

@@ -29,7 +29,9 @@ describe('classifyWithAI', () => {
   it('falls back to local rules when there is no provider configured', async () => {
     getActiveProvider.mockReturnValue(null);
 
-    const result = await classifyWithAI('Necesito corregir un workflow de n8n.');
+    const result = await classifyWithAI(
+      'Necesito corregir un workflow de n8n.',
+    );
 
     expect(result._fallback).toBe(true);
     expect(result._fallbackReason).toBe('Sin proveedor configurado');
@@ -37,7 +39,11 @@ describe('classifyWithAI', () => {
   });
 
   it('maps a successful AI response and normalizes 0-1 confidence to 0-100', async () => {
-    getActiveProvider.mockReturnValue({ id: 'groq', key: 'test-key', model: 'test-model' });
+    getActiveProvider.mockReturnValue({
+      id: 'groq',
+      key: 'test-key',
+      model: 'test-model',
+    });
 
     const aiContent = JSON.stringify({
       id: 'general_context',
@@ -52,7 +58,10 @@ describe('classifyWithAI', () => {
       reason: 'una razon',
       diagnosticExplanation: 'explicacion',
     });
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockAIResponse(aiContent)));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(mockAIResponse(aiContent)),
+    );
 
     const result = await classifyWithAI('texto del usuario');
 
@@ -63,8 +72,15 @@ describe('classifyWithAI', () => {
   });
 
   it('falls back to local rules when the provider call throws', async () => {
-    getActiveProvider.mockReturnValue({ id: 'groq', key: 'test-key', model: 'test-model' });
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
+    getActiveProvider.mockReturnValue({
+      id: 'groq',
+      key: 'test-key',
+      model: 'test-model',
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockRejectedValue(new Error('network down')),
+    );
 
     const result = await classifyWithAI('texto del usuario');
 
@@ -73,8 +89,15 @@ describe('classifyWithAI', () => {
   });
 
   it('falls back when the provider returns non-JSON garbage', async () => {
-    getActiveProvider.mockReturnValue({ id: 'groq', key: 'test-key', model: 'test-model' });
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockAIResponse('no hay json aca')));
+    getActiveProvider.mockReturnValue({
+      id: 'groq',
+      key: 'test-key',
+      model: 'test-model',
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(mockAIResponse('no hay json aca')),
+    );
 
     const result = await classifyWithAI('texto del usuario');
 

@@ -1,4 +1,4 @@
-name: ContextForge CI
+name: CI
 
 on:
   push:
@@ -6,8 +6,18 @@ on:
       - main
   pull_request:
 
+# Cancel superseded runs on the same ref so pushes don't queue up behind
+# each other.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  verify:
+    name: Lint, format, test and build
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
@@ -26,8 +36,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run tests with coverage
+        run: npm run coverage
+
+      # SECURITY: no .env and no VITE_*_KEY variables are available here, so
+      # the build is verified exactly as it is published.
       - name: Build project
         run: npm run build
-
-      - name: Run tests
-        run: npm test

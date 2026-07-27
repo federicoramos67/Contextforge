@@ -6,6 +6,7 @@ import {
   ACTIVE_PROVIDER_KEY,
 } from '../config';
 import { CONFIG_PROVIDERS, EMPTY_FORM } from '../constants/providers';
+import { useI18n } from '../i18n/useI18n.js';
 
 // Enmascara una key mostrando solo los últimos 4 caracteres
 function maskKey(value) {
@@ -32,6 +33,7 @@ export default function ProviderSettings({
   setCopiedMessage,
   onClose,
 }) {
+  const { t } = useI18n();
   const [formValues, setFormValues] = useState(EMPTY_FORM);
   // Mensaje de confirmación que se muestra dentro del panel antes de cerrarlo
   const [configMessage, setConfigMessage] = useState('');
@@ -54,14 +56,16 @@ export default function ProviderSettings({
     const active = getActiveProvider();
     if (active) {
       // Muestra confirmación dentro del panel 1.2s antes de cerrarlo
-      setConfigMessage(`✓ Proveedor activo: ${active.name}`);
+      setConfigMessage(
+        t('settings.activeProviderConfirm', { name: active.name }),
+      );
       setTimeout(() => {
         onClose();
         setConfigMessage('');
       }, 1200);
     } else {
       onClose();
-      setCopiedMessage('Sin proveedor activo — usando modo heurístico');
+      setCopiedMessage(t('settings.noProvider'));
     }
   }
 
@@ -78,8 +82,8 @@ export default function ProviderSettings({
     if (!active) setUseAI(false);
     setCopiedMessage(
       active
-        ? `Keys de UI borradas. Proveedor activo por .env: ${active.name}`
-        : 'Keys borradas — sin proveedor activo. Usando modo heurístico.',
+        ? t('settings.clearedWithEnvProvider', { name: active.name })
+        : t('settings.clearedNoProvider'),
     );
   }
 
@@ -87,18 +91,17 @@ export default function ProviderSettings({
 
   return (
     <section className="config-panel panel">
-      <h3>Proveedores de IA</h3>
+      <h3>{t('settings.title')}</h3>
 
       {/* Aviso de seguridad: las keys viven solo en el navegador del usuario */}
-      <p className="config-security-note">
-        🔒 Tu API key se guarda solo en este navegador (localStorage) y nunca se
-        envía a nuestros servidores. Usá keys con límite de gasto.
-      </p>
+      <p className="config-security-note">{t('settings.securityNote')}</p>
 
       {/* Selector de proveedor activo: visible cuando hay al menos uno configurado */}
       {available.length > 0 && (
         <div className="config-provider-select">
-          <label htmlFor="cfg-active-provider">Proveedor activo:</label>
+          <label htmlFor="cfg-active-provider">
+            {t('settings.activeProviderLabel')}
+          </label>
           <select
             id="cfg-active-provider"
             value={selectedProviderId}
@@ -112,37 +115,49 @@ export default function ProviderSettings({
               }
             }}
           >
-            <option value="auto">Auto (prioridad)</option>
+            <option value="auto">{t('settings.autoOption')}</option>
             {available.map(({ id, name }) => (
-              <option key={id} value={id}>{name}</option>
+              <option key={id} value={id}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
       )}
 
       <div className="config-grid">
-        {CONFIG_PROVIDERS.map(({ id, label, type, placeholder }) => (
+        {CONFIG_PROVIDERS.map(({ id, label, labelKey, type, placeholder }) => (
           <div key={id} className="config-field">
-            <label htmlFor={`cfg-${id}`}>{label}</label>
+            <label htmlFor={`cfg-${id}`}>
+              {labelKey ? t(labelKey) : label}
+            </label>
             <input
               id={`cfg-${id}`}
               type={type}
               value={formValues[id]}
-              onChange={(e) => setFormValues((v) => ({ ...v, [id]: e.target.value }))}
+              onChange={(e) =>
+                setFormValues((v) => ({ ...v, [id]: e.target.value }))
+              }
               placeholder={placeholder}
               autoComplete="off"
             />
             {savedKeys[id] && (
               <small className="config-saved">
-                Guardada: {maskValue(id, savedKeys[id])}
+                {t('settings.savedPrefix', {
+                  value: maskValue(id, savedKeys[id]),
+                })}
               </small>
             )}
           </div>
         ))}
       </div>
       <div className="actions-row">
-        <button className="primary-button" onClick={saveConfig}>Guardar</button>
-        <button className="secondary-button" onClick={clearConfig}>Borrar todo</button>
+        <button className="primary-button" onClick={saveConfig}>
+          {t('settings.save')}
+        </button>
+        <button className="secondary-button" onClick={clearConfig}>
+          {t('settings.clearAll')}
+        </button>
       </div>
       {/* Confirmación transitoria que aparece al guardar una key válida */}
       {configMessage && <p className="config-confirm">{configMessage}</p>}

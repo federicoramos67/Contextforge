@@ -1,15 +1,29 @@
-function renderList(items) {
-  return items?.length ? items.map((item) => `- ${item}`).join('\n') : '- Sin datos.';
+import { DEFAULT_LOCALE, getTranslator } from '../i18n/index.js';
+
+function renderList(items, t) {
+  return items?.length
+    ? items.map((item) => `- ${item}`).join('\n')
+    : `- ${t('report.noData')}`;
 }
 
-function renderInferredContext(inferredContext = {}) {
+// Las claves de `inferredContext` son estables ('audience', 'tone', ...); acá se
+// traducen a la etiqueta legible del idioma activo, y si apareciera una clave
+// sin traducción se imprime tal cual en vez de romper el reporte.
+function renderInferredContext(inferredContext = {}, t) {
   const rows = Object.entries(inferredContext).filter(([, value]) => {
     return Array.isArray(value) ? value.length > 0 : Boolean(value);
   });
 
-  return rows.length
-    ? rows.map(([key, value]) => `- ${key}: ${Array.isArray(value) ? value.join('; ') : value}`).join('\n')
-    : '- Sin contexto inferido.';
+  if (!rows.length) return `- ${t('report.noInferredContext')}`;
+
+  return rows
+    .map(([key, value]) => {
+      const label = t(`autofillLogic.labels.${key}`);
+      const printedLabel =
+        label === `autofillLogic.labels.${key}` ? key : label;
+      return `- ${printedLabel}: ${Array.isArray(value) ? value.join('; ') : value}`;
+    })
+    .join('\n');
 }
 
 export function buildMarkdownReport({
@@ -22,107 +36,116 @@ export function buildMarkdownReport({
   contextAutofill,
   aiResponse,
   responseEvaluation,
+  locale = DEFAULT_LOCALE,
 }) {
+  const t = getTranslator(locale);
+
   const auditSection = missingContextAudit
     ? `
-## Auditoria de contexto faltante
+## ${t('report.auditSection')}
 
-### Contexto faltante
-${renderList(missingContextAudit.missingItems)}
+### ${t('report.auditMissing')}
+${renderList(missingContextAudit.missingItems, t)}
 
-### Riesgos si no se agrega
-${renderList(missingContextAudit.riskWarnings)}
+### ${t('report.auditRisks')}
+${renderList(missingContextAudit.riskWarnings, t)}
 
-### Preguntas utiles antes de consultar a la IA
-${renderList(missingContextAudit.clarificationQuestions)}
+### ${t('report.auditQuestions')}
+${renderList(missingContextAudit.clarificationQuestions, t)}
 `
     : '';
+
   const contextAutofillSection = contextAutofill
     ? `
-## Contexto rellenado desde material de referencia
+## ${t('report.autofillSection')}
 
-### Material de referencia pegado
+### ${t('report.autofillReference')}
 \`\`\`text
 ${referenceText || ''}
 \`\`\`
 
-### Contexto inferido
-${renderInferredContext(contextAutofill.inferredContext)}
+### ${t('report.autofillInferred')}
+${renderInferredContext(contextAutofill.inferredContext, t)}
 
-### Huecos rellenados
-${renderList(contextAutofill.filledItems)}
+### ${t('report.autofillFilled')}
+${renderList(contextAutofill.filledItems, t)}
 
-### Huecos todavia faltantes
-${renderList(contextAutofill.stillMissingItems)}
+### ${t('report.autofillStillMissing')}
+${renderList(contextAutofill.stillMissingItems, t)}
 
-### Prompt actualizado
+### ${t('report.autofillUpdatedPrompt')}
 \`\`\`text
 ${contextAutofill.updatedPrompt}
 \`\`\`
 `
     : '';
+
   const responseEvaluationSection = responseEvaluation
     ? `
-## Evaluacion de respuesta de IA
+## ${t('report.evaluationSection')}
 
-### Respuesta pegada
+### ${t('report.evaluationResponse')}
 \`\`\`text
 ${aiResponse || ''}
 \`\`\`
 
-### Nivel de completitud
+### ${t('report.evaluationLevel')}
 ${responseEvaluation.completionLevel}
 
-### Que respondio bien
-${renderList(responseEvaluation.strengths)}
+### ${t('report.evaluationStrengths')}
+${renderList(responseEvaluation.strengths, t)}
 
-### Que falta o esta debil
-${renderList(responseEvaluation.missingOrWeakPoints)}
+### ${t('report.evaluationWeakPoints')}
+${renderList(responseEvaluation.missingOrWeakPoints, t)}
 
-### Riesgos
-${renderList(responseEvaluation.riskWarnings)}
+### ${t('report.evaluationRisks')}
+${renderList(responseEvaluation.riskWarnings, t)}
 
-### Siguiente prompt recomendado
+### ${t('report.evaluationNextPrompt')}
 \`\`\`text
 ${responseEvaluation.nextPrompt}
 \`\`\`
 `
     : '';
 
-  return `# Diagnostico de contexto - ContextForge
+  return `${t('report.title')}
 
-## Prompt original
+## ${t('report.originalPrompt')}
 ${userText}
 
-## Categoria detectada
+## ${t('report.detectedCategory')}
 ${advice.category}
 
-Confianza estimada: ${advice.confidence}%
+${t('report.estimatedConfidence', { value: advice.confidence })}
 
-## Formato principal recomendado
+## ${t('report.primaryFormats')}
 ${advice.primaryFormats.map((item) => `- ${item}`).join('\n')}
 
-## Formatos complementarios
+## ${t('report.secondaryFormats')}
 ${advice.secondaryFormats.map((item) => `- ${item}`).join('\n')}
 
-## Que evitar
+## ${t('report.avoid')}
 ${advice.avoid.map((item) => `- ${item}`).join('\n')}
 
-## Checklist para compartir con la IA
+## ${t('report.checklist')}
 ${advice.checklist.map((item) => `- [ ] ${item}`).join('\n')}
 
-## Razon
+## ${t('report.reason')}
 ${advice.reason}
 
-## Calidad del contexto
-Puntaje: ${scoreData.score}/100
-Nivel: ${scoreData.level}
+## ${t('report.contextQuality')}
+${t('report.score', { score: scoreData.score })}
+${t('report.level', { level: scoreData.level })}
 
-### Mejoras sugeridas
-${scoreData.improvements.length ? scoreData.improvements.map((item) => `- ${item}`).join('\n') : '- El contexto inicial es solido.'}
+### ${t('report.improvements')}
+${
+  scoreData.improvements.length
+    ? scoreData.improvements.map((item) => `- ${item}`).join('\n')
+    : `- ${t('report.solidContext')}`
+}
 ${auditSection}
 
-## Prompt refinado
+## ${t('report.refinedPrompt')}
 \`\`\`text
 ${refinedPrompt}
 \`\`\`

@@ -14,7 +14,9 @@ describe('auditMissingContext', () => {
     const audit = auditMissingContext(text, category);
 
     expect(category.id).toBe('programming_debug');
-    expect(normalizedItems(audit.missingItems)).toContain('mensaje de error completo');
+    expect(normalizedItems(audit.missingItems)).toContain(
+      'mensaje de error completo',
+    );
     expect(audit.riskWarnings.length).toBeGreaterThan(0);
     expect(audit.clarificationQuestions.length).toBeGreaterThan(0);
   });
@@ -38,12 +40,19 @@ describe('auditMissingContext', () => {
   });
 
   it('does not report checklist items already present in the prompt', () => {
-    const text = 'Tengo un archivo React, el error completo y el comando npm run build.';
+    const text =
+      'Tengo un archivo React, el error completo y el comando npm run build.';
     const category = classifyPrompt(text);
     const audit = auditMissingContext(text, category);
 
-    expect(normalizedItems(audit.missingItems)).not.toContain('archivo o bloque de codigo completo');
-    expect(normalizedItems(audit.missingItems)).not.toContain('mensaje de error completo');
-    expect(normalizedItems(audit.missingItems)).not.toContain('comando usado para ejecutar');
+    expect(normalizedItems(audit.missingItems)).not.toContain(
+      'archivo o bloque de codigo completo',
+    );
+    expect(normalizedItems(audit.missingItems)).not.toContain(
+      'mensaje de error completo',
+    );
+    expect(normalizedItems(audit.missingItems)).not.toContain(
+      'comando usado para ejecutar',
+    );
   });
 });

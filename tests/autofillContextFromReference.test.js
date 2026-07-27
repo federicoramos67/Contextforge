@@ -4,7 +4,13 @@ import { autofillContextFromReference } from '../src/logic/autofillContextFromRe
 const category = {
   id: 'writing_editing',
   label: 'Redaccion / correccion / estilo',
-  checklist: ['Objetivo', 'Tono', 'Destinatario', 'Formato de salida', 'Limites o condiciones'],
+  checklist: [
+    'Objetivo',
+    'Tono',
+    'Destinatario',
+    'Formato de salida',
+    'Limites o condiciones',
+  ],
 };
 
 const advice = {
@@ -12,7 +18,13 @@ const advice = {
 };
 
 const missingContextAudit = {
-  missingItems: ['Objetivo', 'Tono', 'Destinatario', 'Formato de salida', 'Limites o condiciones'],
+  missingItems: [
+    'Objetivo',
+    'Tono',
+    'Destinatario',
+    'Formato de salida',
+    'Limites o condiciones',
+  ],
   riskWarnings: [],
   clarificationQuestions: [],
 };
@@ -34,7 +46,8 @@ describe('autofillContextFromReference', () => {
   it('detects audience, call to action and format from an email campaign', () => {
     const result = autofillContextFromReference({
       userText: 'Quiero crear una nueva campaña.',
-      referenceText: 'Email de campaña para clientes de pymes. El objetivo es contactar leads y pedirles agendar una demo.',
+      referenceText:
+        'Email de campaña para clientes de pymes. El objetivo es contactar leads y pedirles agendar una demo.',
       category,
       advice,
       missingContextAudit,
@@ -49,7 +62,8 @@ describe('autofillContextFromReference', () => {
   it('detects professional or formal tone', () => {
     const result = autofillContextFromReference({
       userText: 'Necesito redactar una propuesta.',
-      referenceText: 'La propuesta debe mantener un tono profesional y formal para empresas.',
+      referenceText:
+        'La propuesta debe mantener un tono profesional y formal para empresas.',
       category,
       advice,
       missingContextAudit,
@@ -81,6 +95,8 @@ Formato: email comercial breve.`,
       missingContextAudit,
     });
 
-    expect(result.inferredContext.constraints).toContain('no usar descuentos mayores al 15%.');
+    expect(result.inferredContext.constraints).toContain(
+      'no usar descuentos mayores al 15%.',
+    );
   });
 });

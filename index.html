@@ -1,18 +1,55 @@
 <!doctype html>
-<html lang="es">
+<!--
+  El atributo lang de acá abajo es solo el valor previo a que monte React:
+  LanguageProvider lo reemplaza por el idioma detectado o elegido por el
+  usuario. Los metadatos estáticos van en inglés porque son los que leen los
+  buscadores y las vistas previas al compartir el enlace.
+-->
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="ContextForge recomienda qué contexto y archivos compartir con una IA según tu prompt." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0d111c" />
+    <meta name="author" content="Federico Ramos" />
+    <meta
+      name="description"
+      content="ContextForge recommends which files, formats and constraints to share with an AI, based on your prompt. Local-first, bilingual (English/Español), no account required."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ContextForge" />
+    <meta
+      property="og:title"
+      content="ContextForge — context strategy tool for AI"
+    />
+    <meta
+      property="og:description"
+      content="Write a prompt in plain language and get a clear recommendation on which files, formats and context are worth sharing with an AI."
+    />
+    <meta
+      property="og:url"
+      content="https://federicoramos67.github.io/Contextforge/"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.bunny.net/css?family=space-grotesk:600,700|ibm-plex-sans:400,500,700"
     />
-    <title>ContextForge</title>
+    <title>ContextForge — context strategy tool for AI</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      ContextForge needs JavaScript to run: the whole analysis happens in your
+      browser. — ContextForge necesita JavaScript: todo el análisis ocurre en tu
+      navegador.
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

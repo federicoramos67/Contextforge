@@ -4,7 +4,7 @@ import { classifyPrompt } from '../src/logic/classifyPrompt';
 describe('classifyPrompt', () => {
   it('detects n8n automation prompts', () => {
     const result = classifyPrompt(
-      'Necesito corregir un workflow de n8n que falla cuando llega un webhook.'
+      'Necesito corregir un workflow de n8n que falla cuando llega un webhook.',
     );
 
     expect(result.id).toBe('n8n_automation');
@@ -12,7 +12,7 @@ describe('classifyPrompt', () => {
 
   it('detects advanced data analysis prompts', () => {
     const result = classifyPrompt(
-      'Necesito analizar un CSV de ventas y crear KPIs para un dashboard.'
+      'Necesito analizar un CSV de ventas y crear KPIs para un dashboard.',
     );
 
     expect(result.id).toBe('advanced_data_analysis');
@@ -46,14 +46,18 @@ describe('classifyPrompt', () => {
   });
 
   it('detects email subscription renewal campaigns as marketing campaigns', () => {
-    const result = classifyPrompt('Quiero crear una campaña de email para renovar suscripciones vencidas.');
+    const result = classifyPrompt(
+      'Quiero crear una campaña de email para renovar suscripciones vencidas.',
+    );
 
     expect(result.id).toBe('marketing_campaign');
     expect(result.id).not.toBe('visual_ui');
   });
 
   it('detects previous campaign material with CTA as marketing campaign', () => {
-    const result = classifyPrompt('Campaña anterior para clientes existentes con CTA renovar ahora.');
+    const result = classifyPrompt(
+      'Campaña anterior para clientes existentes con CTA renovar ahora.',
+    );
 
     expect(result.id).toBe('marketing_campaign');
   });

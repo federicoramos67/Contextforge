@@ -1,6 +1,7 @@
 // Clasificador con IA real — reemplaza la lógica heurística cuando hay un proveedor activo.
 // Devuelve el mismo shape que classifyPrompt.js con fallback automático si la llamada falla.
-import rules from '../data/contextRules.json';
+import { getRule, getRules } from '../data/rules.js';
+import { DEFAULT_LOCALE, getLocaleName, getTranslator } from '../i18n/index.js';
 import { classifyPrompt } from './classifyPrompt';
 import { getActiveProvider } from '../config';
 
@@ -8,8 +9,10 @@ import { getActiveProvider } from '../config';
 // Si un proveedor se cuelga, el fetch se corta y se dispara el fallback local.
 const REQUEST_TIMEOUT_MS = 30000;
 
-function buildSystemPrompt() {
-  const categoryList = rules.map((r) => `- ${r.id}: ${r.label}`).join('\n');
+function buildSystemPrompt(locale) {
+  const categoryList = getRules(locale)
+    .map((r) => `- ${r.id}: ${r.label}`)
+    .join('\n');
 
   return `You are a context strategy advisor for AI tools. Your job is to analyze the user's need written in natural language and determine what type of information and file formats would help an AI understand and respond better.
 
@@ -34,27 +37,36 @@ Respond with this exact shape:
 }
 
 If no category fits clearly, use general_context.
-Never invent categories outside the list.`;
+Never invent categories outside the list.
+
+Write every human-readable string in the response (label, description,
+primaryFormats, secondaryFormats, avoid, checklist, reason,
+diagnosticExplanation) in ${getLocaleName(locale)}, regardless of the language
+the user wrote their prompt in. Keep the "id" field exactly as listed above.`;
 }
 
 // Intenta extraer un objeto JSON de texto que puede incluir markdown o texto extra
-export function extractJSON(text) {
+export function extractJSON(text, locale = DEFAULT_LOCALE) {
   try {
     return JSON.parse(text.trim());
   } catch {}
 
   const block = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (block) {
-    try { return JSON.parse(block[1].trim()); } catch {}
+    try {
+      return JSON.parse(block[1].trim());
+    } catch {}
   }
 
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start !== -1 && end > start) {
-    try { return JSON.parse(text.slice(start, end + 1)); } catch {}
+    try {
+      return JSON.parse(text.slice(start, end + 1));
+    } catch {}
   }
 
-  throw new Error('No se pudo extraer JSON válido de la respuesta de la IA');
+  throw new Error(getTranslator(locale)('provider.noJSON'));
 }
 
 // --- Adaptadores por proveedor ---
@@ -83,7 +95,7 @@ async function callOpenAICompat(endpoint, key, model, systemPrompt, userText) {
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${key}`,
+      Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -141,71 +153,97 @@ async function callGemini(provider, systemPrompt, userText) {
   return data.candidates[0].content.parts[0].text;
 }
 
-async function callProvider(provider, systemPrompt, userText) {
+async function callProvider(provider, systemPrompt, userText, t) {
   switch (provider.id) {
     case 'ollama':
       return callOllama(provider, systemPrompt, userText);
     case 'groq':
       return callOpenAICompat(
         'https://api.groq.com/openai/v1/chat/completions',
-        provider.key, provider.model, systemPrompt, userText,
+        provider.key,
+        provider.model,
+        systemPrompt,
+        userText,
       );
     case 'mistral':
       return callOpenAICompat(
         'https://api.mistral.ai/v1/chat/completions',
-        provider.key, provider.model, systemPrompt, userText,
+        provider.key,
+        provider.model,
+        systemPrompt,
+        userText,
       );
     case 'openai':
       return callOpenAICompat(
         'https://api.openai.com/v1/chat/completions',
-        provider.key, provider.model, systemPrompt, userText,
+        provider.key,
+        provider.model,
+        systemPrompt,
+        userText,
       );
     case 'anthropic':
       return callAnthropic(provider, systemPrompt, userText);
     case 'gemini':
       return callGemini(provider, systemPrompt, userText);
     default:
-      throw new Error(`Proveedor desconocido: ${provider.id}`);
+      throw new Error(t('provider.unknownProvider', { id: provider.id }));
   }
 }
 
 // --- Función principal exportada ---
 
-export async function classifyWithAI(text) {
+export async function classifyWithAI(text, locale = DEFAULT_LOCALE) {
+  const t = getTranslator(locale);
   const provider = getActiveProvider();
 
   if (!provider) {
-    return { ...classifyPrompt(text), _fallback: true, _fallbackReason: 'Sin proveedor configurado' };
+    return {
+      ...classifyPrompt(text, locale),
+      _fallback: true,
+      _fallbackReason: t('provider.noProviderConfigured'),
+    };
   }
 
   try {
-    const systemPrompt = buildSystemPrompt();
-    const raw = await callProvider(provider, systemPrompt, text);
-    const aiResult = extractJSON(raw);
+    const systemPrompt = buildSystemPrompt(locale);
+    const raw = await callProvider(provider, systemPrompt, text, t);
+    const aiResult = extractJSON(raw, locale);
 
     // Normalizar confidence: algunos modelos devuelven escala 0-1 en lugar de 0-100
     if (typeof aiResult.confidence === 'number' && aiResult.confidence <= 1) {
       aiResult.confidence = Math.round(aiResult.confidence * 100);
     }
 
-    // Usar la regla base del JSON para completar campos que la IA pudiera omitir
-    const rule = rules.find((r) => r.id === aiResult.id)
-      || rules.find((r) => r.id === 'general_context');
+    // Usar la regla base del idioma activo para completar campos que la IA
+    // pudiera omitir. getRule ya cae a general_context si el id no existe.
+    const rule = getRule(aiResult.id, locale);
 
     return {
       ...rule,
       label: aiResult.label || rule.label,
-      confidence: typeof aiResult.confidence === 'number' ? aiResult.confidence : 50,
-      matchedKeywords: Array.isArray(aiResult.matchedKeywords) ? aiResult.matchedKeywords : [],
+      confidence:
+        typeof aiResult.confidence === 'number' ? aiResult.confidence : 50,
+      matchedKeywords: Array.isArray(aiResult.matchedKeywords)
+        ? aiResult.matchedKeywords
+        : [],
       description: aiResult.description || rule.description,
-      primaryFormats: Array.isArray(aiResult.primaryFormats) && aiResult.primaryFormats.length
-        ? aiResult.primaryFormats : rule.primaryFormats,
-      secondaryFormats: Array.isArray(aiResult.secondaryFormats) && aiResult.secondaryFormats.length
-        ? aiResult.secondaryFormats : rule.secondaryFormats,
-      avoid: Array.isArray(aiResult.avoid) && aiResult.avoid.length
-        ? aiResult.avoid : rule.avoid,
-      checklist: Array.isArray(aiResult.checklist) && aiResult.checklist.length
-        ? aiResult.checklist : rule.checklist,
+      primaryFormats:
+        Array.isArray(aiResult.primaryFormats) && aiResult.primaryFormats.length
+          ? aiResult.primaryFormats
+          : rule.primaryFormats,
+      secondaryFormats:
+        Array.isArray(aiResult.secondaryFormats) &&
+        aiResult.secondaryFormats.length
+          ? aiResult.secondaryFormats
+          : rule.secondaryFormats,
+      avoid:
+        Array.isArray(aiResult.avoid) && aiResult.avoid.length
+          ? aiResult.avoid
+          : rule.avoid,
+      checklist:
+        Array.isArray(aiResult.checklist) && aiResult.checklist.length
+          ? aiResult.checklist
+          : rule.checklist,
       reason: aiResult.reason || rule.reason,
       diagnosticExplanation: aiResult.diagnosticExplanation || '',
     };
@@ -214,11 +252,11 @@ export async function classifyWithAI(text) {
     // no respondio a tiempo: lo traducimos a un mensaje claro para la UI.
     const isTimeout = err.name === 'TimeoutError' || err.name === 'AbortError';
     return {
-      ...classifyPrompt(text),
+      ...classifyPrompt(text, locale),
       _fallback: true,
       _fallbackReason: isTimeout
-        ? `El proveedor no respondio en ${REQUEST_TIMEOUT_MS / 1000}s (timeout)`
-        : err.message || 'Error desconocido',
+        ? t('provider.timeout', { seconds: REQUEST_TIMEOUT_MS / 1000 })
+        : err.message || t('provider.unknownError'),
     };
   }
 }
